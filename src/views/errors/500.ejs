@@ -1,0 +1,5 @@
+<%- include("./error", { 
+  code: statusCode || 500, 
+  message: message || "Internal Server Error", 
+  stack: stack || null 
+}) %>

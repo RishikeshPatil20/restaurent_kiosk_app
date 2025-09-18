@@ -1,0 +1,59 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="sidebar p-3 flex-shrink-0">
+    <h3 class="mb-4">Admin Panel</h3>
+    <a href="/api/admin/dashboard">Dashboard</a>
+    <a href="/api/admin/users" class="active">Manage Users</a>
+    <a href="/api/admin/create-staff">Create Staff</a>
+    <a href="/api/admin/logout">Logout</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-grow-1 p-4">
+    <nav class="navbar navbar-custom mb-4">
+      <span class="navbar-brand mb-0 h1">
+        Welcome, <%= user.role %> 👋
+      </span>
+    </nav>
+
+    <div class="container">
+      <h2 class="mb-4">Manage Users</h2>
+
+      <table class="table table-striped table-hover shadow-sm">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created At</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u=> { %>
+            <tr>
+              <td>
+                <%= u.id %>
+              </td>
+              <td>
+                <%= u.email %>
+              </td>
+              <td>
+                <%= u.role %>
+              </td>
+              <td>
+                <%= new Date(u.created_at).toLocaleString() %>
+              </td>
+              <td>
+                <form action="/api/admin/users/<%= u.id %>/delete" method="POST"
+                  onsubmit="return confirm('Are you sure you want to delete this user?');">
+                  <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<header class="main-header">
+    <div class="header-brand">
+        <a href="/">
+            <img src="/images/Logo-Restaurent-kiosk.png" alt="Brand Logo" class="brand-logo">
+        </a>
+        <h1 class="brand-name">Restaurent-kiosk-Name</h1>
+    </div>
+
+    <div class="header-actions">
+        <form action="/search" method="get" class="search-form">
+            <div class="search-container">
+                <input type="text" placeholder="Search..." name="query" class="search-input">
+                <button type="submit" class="search-button">
+                    <i class="fa fa-search">🔍</i>
+                </button>
+            </div>
+        </form>
+
+        <a href="<%= locals.user ? '/api/auth/profile' : '/' %>" class="profile-link">
+            <img src="/images/profile-image.png" alt="Profile" class="profile-image">
+        </a>
+
+    </div>
+</header>

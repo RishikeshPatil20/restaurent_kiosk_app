@@ -1,0 +1,61 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="sidebar p-3 flex-shrink-0">
+    <h3 class="mb-4">Admin Panel</h3>
+    <a href="/api/admin/dashboard" class="active">Dashboard</a>
+    <a href="/api/admin/users">Manage Users</a>
+    <a href="/api/admin/create-staff">Create Staff</a>
+    <a href="/api/admin/logout">Logout</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-grow-1 p-4">
+    <nav class="navbar navbar-custom mb-4">
+      <span class="navbar-brand mb-0 h1">
+        Welcome, <%= user.role %> 👋
+      </span>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row g-4">
+        <!-- Total Users -->
+        <div class="col-md-4">
+          <div class="card card-dashboard p-3">
+            <h5>Total Users</h5>
+            <p class="display-6 text-primary"><%= stats.totalUsers %></p>
+          </div>
+        </div>
+
+        <!-- Active Staff -->
+        <div class="col-md-4">
+          <div class="card card-dashboard p-3">
+            <h5>Active Staff</h5>
+            <p class="display-6 text-success"><%= stats.staffCount %></p>
+          </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="col-md-4">
+          <div class="card card-dashboard p-3">
+            <h5>Pending Orders</h5>
+            <p class="display-6 text-warning"><%= stats.pendingOrders %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card card-dashboard p-3">
+            <h5>Recent Activity</h5>
+            <ul class="list-group list-group-flush">
+              <% stats.recentActivity.forEach(activity => { %>
+                <li class="list-group-item"><%= activity %></li>
+              <% }) %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> <!-- /Main content -->
+</div>

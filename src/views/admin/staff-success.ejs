@@ -1,0 +1,28 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="sidebar p-3 flex-shrink-0">
+    <h3 class="mb-4">Admin Panel</h3>
+    <a href="/api/admin/dashboard">Dashboard</a>
+    <a href="/api/admin/users">Manage Users</a>
+    <a href="/api/admin/create-staff" class="active">Create Staff</a>
+    <a href="/api/admin/logout">Logout</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-grow-1 p-4 text-center">
+    <nav class="navbar navbar-custom mb-4">
+      <span class="navbar-brand mb-0 h1">
+        Welcome, <%= user.role %> 👋
+      </span>
+    </nav>
+
+    <div class="container">
+      <div class="alert alert-success shadow-sm p-4">
+        <h2 class="mb-3">🎉 Staff Created Successfully!</h2>
+        <p>The new staff member has been added to the system.</p>
+        <a href="/api/admin/users" class="btn btn-primary mt-3">View All Users</a>
+        <a href="/api/admin/create-staff" class="btn btn-outline-success mt-3">Add Another</a>
+      </div>
+    </div>
+  </div>
+</div>

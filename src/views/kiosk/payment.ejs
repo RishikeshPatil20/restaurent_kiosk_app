@@ -1,0 +1,24 @@
+<div class="container text-center py-5">
+    <h2 class="mb-4">💳 Processing Payment</h2>
+    <p class="lead">Please wait while we redirect you to the payment gateway...</p>
+
+    <% if (razorpayKey) { %>
+      <!-- ✅ Real Razorpay -->
+      <div id="razorpay-container"
+           data-key="<%= razorpayKey %>"
+           data-orderid="<%= razorpayOrderId %>"
+           data-amount="<%= amount %>"
+           data-currency="<%= currency %>"></div>
+    <% } else { %>
+      <!-- ⚠️ Dummy Simulation -->
+      <div class="alert alert-info mt-4">
+        Razorpay keys not configured. Running <b>Dummy Payment Simulation</b>.
+      </div>
+      <form action="/api/payments/verify" method="POST" class="mt-4">
+        <input type="hidden" name="razorpay_order_id" value="DUMMY-<%= order.id %>">
+        <input type="hidden" name="razorpay_payment_id" value="SIMULATED-PAYMENT">
+        <input type="hidden" name="razorpay_signature" value="SIMULATED-SIGNATURE">
+        <button type="submit" class="btn btn-success">✅ Simulate Success</button>
+      </form>
+    <% } %>
+  </div>

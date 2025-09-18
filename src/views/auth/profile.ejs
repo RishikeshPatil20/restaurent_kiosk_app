@@ -1,0 +1,74 @@
+<div class="profile-container">
+  <!-- Left Column: Profile -->
+  <div class="profile-box">
+    <h2>👤 Profile</h2>
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Role:</strong> <%= user.role %></p>
+    <p><strong>Joined:</strong> <%= user.createdAt ? new Date(user.createdAt).toDateString() : "N/A" %></p>
+
+    <form action="/api/auth/logout" method="POST">
+      <button class="btn btn-danger">Logout</button>
+    </form>
+    <div class="back-to-menu mt-2">
+  <% if (user.role === "staff") { %>
+    <a href="/staff" class="btn btn-outline-dark">⬅ Back to Dashboard</a>
+  <% } else if (user.role === "admin") { %>
+    <a href="/api/admin/dashboard" class="btn btn-outline-dark">⬅ Back to Admin Dashboard</a>
+  <% } else { %>
+    <a href="/kiosk" class="btn btn-outline-dark">⬅ Back to Menu</a>
+  <% } %>
+</div>
+
+  </div>
+
+  <!-- Right Column: Orders -->
+  <div class="orders-box">
+    <h2>🧾 My Orders</h2>
+
+    <% if (orders && orders.length > 0) { %>
+      <% orders.forEach(order => { %>
+        <div class="order-card card mb-3 p-3 shadow-sm" id="order-<%= order.id %>">
+          <h5>Order #<%= order.id %></h5>
+          <p><strong>Total:</strong> ₹<%= order.total_amount %></p>
+          <p><strong>Date:</strong> <%= new Date(order.created_at).toDateString() %></p>
+
+          <!-- Timeline -->
+          <div class="order-tracker" id="tracker-<%= order.id %>">
+            <% const steps = ["pending","accepted","preparing","ready","served","cancelled"]; %>
+            <ul class="progressbar">
+              <% steps.forEach(step => { %>
+                <% 
+                  let cls = "";
+                  if (order.status === "cancelled" && step === "cancelled") {
+                    cls = "cancelled"; // 🔴 Only Cancelled red
+                  } else if (order.status !== "cancelled" && steps.indexOf(step) <= steps.indexOf(order.status)) {
+                    cls = "completed"; // ✅ Completed steps green
+                  }
+                %>
+                <li class="<%= cls %>" data-step="<%= step %>">
+                  <%= step.charAt(0).toUpperCase() + step.slice(1) %>
+                </li>
+              <% }) %>
+            </ul>
+          </div>
+
+          <!-- Items -->
+          <ul>
+            <% order.items.forEach(item => { %>
+              <li>
+                <%= item.menu_snapshot_name %> x <%= item.quantity %> 
+                - ₹<%= item.item_price * item.quantity %>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No orders found.</p>
+    <% } %>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/profile.js"></script>
