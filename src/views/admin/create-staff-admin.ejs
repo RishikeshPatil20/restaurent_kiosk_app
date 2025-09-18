@@ -1,0 +1,51 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="sidebar p-3 flex-shrink-0">
+    <h3 class="mb-4">Admin Panel</h3>
+    <a href="/api/admin/dashboard">Dashboard</a>
+    <a href="/api/admin/users">Manage Users</a>
+    <a href="/api/admin/create-staff" class="active">Create Staff</a>
+    <a href="/api/admin/logout">Logout</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-grow-1 p-4">
+    <nav class="navbar navbar-custom mb-4">
+      <span class="navbar-brand mb-0 h1">
+        Welcome, <%= user.role %> 👋
+      </span>
+    </nav>
+
+    <div class="container">
+      <h2 class="mb-4">Create New Staff</h2>
+
+      <form action="/api/admin/create-staff" method="POST" class="card p-4 shadow-sm" style="max-width: 500px;">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="Enter staff email"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100">Create Staff</button>
+      </form>
+    </div>
+  </div>
+</div>

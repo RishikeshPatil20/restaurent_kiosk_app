@@ -1,0 +1,51 @@
+
+<div class="login-container">
+  <div class="card">
+    <h2 class="title">Login</h2>
+
+    <form action="/api/auth/login" method="POST">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          placeholder="Enter your email" 
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          placeholder="Enter your password" 
+          required
+        />
+      </div>
+
+      <!-- Role Selection -->
+      <div class="form-group">
+        <label for="role">Login as</label>
+        <select id="role" name="role" required>
+          <option value="">-- Select Role --</option>
+          <option value="admin">Admin</option>
+          <option value="kiosk">Kiosk User</option>
+          <option value="staff">Staff</option>
+        </select>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <p class="hint">
+      Don’t have an account? 
+      <a href="/api/auth/register">Register here</a>
+    </p>
+  </div>
+</div>

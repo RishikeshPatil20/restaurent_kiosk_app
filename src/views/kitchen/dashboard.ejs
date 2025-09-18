@@ -1,0 +1,77 @@
+<div class="container mt-4">
+  <h2>👨‍🍳 Staff Dashboard - Live Orders</h2>
+
+  <div id="orders-list" class="row mt-3">
+    <% if (orders && orders.length > 0) { %>
+      <% orders.forEach(order => { %>
+        <div class="col-md-6 mb-3" id="order-<%= order.id %>">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Order #<%= order.id %></h5>
+              <p><strong>Table:</strong> <%= order.table_number || "N/A" %></p>
+              <p><strong>Total:</strong> ₹<%= order.total_amount %></p>
+
+              <!-- Timeline -->
+              <div class="order-tracker" id="tracker-<%= order.id %>">
+                <% const steps = ["pending","accepted","preparing","ready","served","cancelled"]; %>
+                <ul class="progressbar">
+                  <% steps.forEach(step => { %>
+                    <li 
+                      class="<%= (
+                        order.status === 'cancelled' 
+                          ? (step === 'cancelled' ? 'active cancelled' : '') 
+                          : (steps.indexOf(step) <= steps.indexOf(order.status) ? 'active' : '')
+                      ) %>"
+                      data-step="<%= step %>">
+                      <%= step.charAt(0).toUpperCase() + step.slice(1) %>
+                    </li>
+                  <% }) %>
+                </ul>
+              </div>
+
+              <ul>
+                <% order.items.forEach(item => { %>
+                  <li><%= item.menu_snapshot_name %> x <%= item.quantity %></li>
+                <% }) %>
+              </ul>
+
+              <!-- Control Buttons -->
+              <div class="btn-group mt-2">
+                <button class="btn btn-sm btn-secondary update-status"
+                        data-id="<%= order.id %>" data-status="accepted"
+                        <%= order.status !== 'pending' ? 'disabled' : '' %>>
+                  ✅ Accept
+                </button>
+                <button class="btn btn-sm btn-info update-status"
+                        data-id="<%= order.id %>" data-status="preparing"
+                        <%= order.status !== 'accepted' ? 'disabled' : '' %>>
+                  🍳 Preparing
+                </button>
+                <button class="btn btn-sm btn-primary update-status"
+                        data-id="<%= order.id %>" data-status="ready"
+                        <%= order.status !== 'preparing' ? 'disabled' : '' %>>
+                  📦 Ready
+                </button>
+                <button class="btn btn-sm btn-success update-status"
+                        data-id="<%= order.id %>" data-status="served"
+                        <%= order.status !== 'ready' ? 'disabled' : '' %>>
+                  🍽️ Served
+                </button>
+                <button class="btn btn-sm btn-danger update-status"
+                        data-id="<%= order.id %>" data-status="cancelled"
+                        <%= order.status !== 'pending' ? 'disabled' : '' %>>
+                  ❌ Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No active orders yet...</p>
+    <% } %>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/kitchen.js"></script>

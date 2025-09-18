@@ -1,0 +1,28 @@
+<!-- backend/src/views/errors/error.ejs -->
+<div class="container text-center my-5">
+  <h1 class="display-4 text-danger">
+    ⚠️ Error <%= code || 500 %>
+  </h1>
+
+  <p class="lead mb-4">
+    <%= message || "Something went wrong." %>
+  </p>
+
+  <% if (url) { %>
+    <p class="text-muted">
+      <small>URL: <%= url %></small>
+    </p>
+  <% } %>
+
+  <% if (stack) { %>
+    <details class="text-start bg-light p-3 rounded mb-4">
+      <summary>Debug Info (dev only)</summary>
+      <pre><%= stack %></pre>
+    </details>
+  <% } %>
+
+  <div class="mt-4">
+    <a href="/" class="btn btn-outline-primary me-2">🏠 Home</a>
+    <a href="/login" class="btn btn-danger">🔑 Login</a>
+  </div>
+</div>

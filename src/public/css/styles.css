@@ -1,0 +1,660 @@
+/* ================== GLOBAL BASE CSS ================== */ 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f8f9fa;
+}
+
+/* ===== Header CSS ===== */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  height: 40px;
+  border-radius: 50%;
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Search Bar */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+.search-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: -30px;
+}
+
+.profile-image {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 2px solid #333;
+}
+
+/* ===== Footer CSS ===== */
+footer {
+  background-color: #222;
+  color: #fff;
+  padding: 25px 15px;
+  text-align: center;
+  margin-top: auto;
+  font-size: 0.95rem;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-links a,
+.social-icons a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 12px;
+  transition: color 0.3s ease-in-out;
+}
+
+.footer-links a:hover,
+.social-icons a:hover {
+  color: #dc3545;
+}
+
+.social-icons a {
+  font-size: 1.2rem;
+}
+
+/* Responsive Footer */
+@media (min-width: 768px) {
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* ===== Category Buttons (Red & White Theme) ===== */
+.category-btn {
+  background-color: #fff;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background-color: #dc3545;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0px 3px 6px rgba(220, 53, 69, 0.3);
+}
+
+/* ===== Login Page ===== */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  padding: 40px 20px;
+  background: #f8f9fa;
+}
+
+.login-container .card {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-container .title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #dc3545;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* Form Fields */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
+
+/* Button */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 10px rgba(220, 53, 69, 0.3);
+}
+
+/* ================== DASHBOARD CSS ================== */
+.sidebar {
+  background-color: #343a40;
+  color: #fff;
+  min-width: 220px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 2px solid #dc3545;
+}
+
+.sidebar a {
+  display: block;
+  padding: 12px 15px;
+  margin: 8px 0;
+  color: #ddd;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease-in-out;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* ================== KIOSK MENU PAGE CSS ================== */
+body.kiosk-page {
+  background-color: #fff;
+}
+
+#categories .list-group-item::before {
+  content: none !important;
+}
+
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #eee;
+  padding: 20px;
+}
+
+#categories .btn {
+  text-align: left;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 500;
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease-in-out;
+}
+
+#categories .btn:hover,
+#categories .btn.active {
+  background-color: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+  transform: translateX(5px);
+}
+
+.menu-item .card {
+  background: #fff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-item .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.12);
+}
+
+.cart {
+  background: #fff;
+  border-left: 1px solid #eee;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.05);
+}
+
+.cart h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.cart-badge {
+  background-color: #dc3545;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 4px 10px;
+  font-size: 0.9rem;
+}
+
+/* ================== PAYMENT PAGE CSS ================== */
+body.payment-page {
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-box {
+  text-align: center;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  max-width: 420px;
+  width: 100%;
+}
+
+.payment-box h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.payment-box p {
+  color: #555;
+  margin: 6px 0;
+}
+
+.loader {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #dc3545;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.payment-box .btn {
+  margin-top: 20px;
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  background-color: #dc3545;
+  color: #fff;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.payment-box .btn:hover {
+  background-color: #b02a37;
+}
+
+/* ================== PAYMENT STATUS PAGE ================== */
+body.payment-status-page {
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-box {
+  text-align: center;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  max-width: 480px;
+  width: 100%;
+}
+
+.status-box.success {
+  border-top: 6px solid #28a745; /* green */
+}
+
+.status-box.failed {
+  border-top: 6px solid #dc3545; /* red */
+}
+
+.status-box.pending {
+  border-top: 6px solid #ffc107; /* yellow for pending */
+}
+
+.status-box h2 {
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.status-box p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.status-box .btn {
+  margin-top: 10px;
+}
+
+/* ================== PROFILE PAGE ================== */
+body.profile-page {
+  background-color: #f8f9fa;
+  padding: 40px 20px;
+}
+
+.profile-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.profile-box {
+  flex: 0 0 25%;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.orders-container {
+  flex: 0 0 65%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 25px;
+}
+
+.profile-box h2 {
+  color: #dc3545;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.profile-box p {
+  margin: 10px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.profile-box strong {
+  color: #555;
+}
+
+.profile-box .btn-danger {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+.orders-container h2 {
+  margin-bottom: 20px;
+  color: #dc3545;
+  font-weight: 600;
+  text-align: center;
+}
+
+.orders-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 25px;
+}
+
+.order-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease-in-out;
+}
+
+.order-card:hover {
+  transform: translateY(-4px);
+}
+
+.order-card h3 {
+  margin: 0 0 12px;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.order-meta {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.order-items {
+  margin-top: 18px;
+}
+
+.order-items h4 {
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+  color: #444;
+}
+
+.order-items ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-items li {
+  background: #f8f9fa;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ================== STATUS BADGES ================== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.status-pending {
+  background: #ffc107;
+  color: #fff;
+}
+
+.status-success {
+  background: #28a745;
+  color: #fff;
+}
+
+.status-failed {
+  background: #dc3545;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .profile-container {
+    flex-direction: column;
+  }
+  .orders-container,
+  .profile-box {
+    flex: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+.back-to-menu {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.back-to-menu .btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.back-to-menu .btn:hover {
+  background-color: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
+
+/* ================== ORDER TIMELINE ================== */
+.progressbar {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.progressbar li {
+  flex: 1;
+  position: relative;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* Default circle (grey outline) */
+.progressbar li::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  display: block;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+/* Connector line */
+.progressbar li::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #ccc;
+  top: 10px;
+  left: -50%;
+  z-index: -1;
+}
+
+.progressbar li:first-child::after {
+  content: none;
+}
+
+/* ✅ Normal flow (green for completed steps) */
+.progressbar li.completed {
+  color: #28a745; /* green text */
+}
+.progressbar li.completed::before {
+  border-color: #28a745;
+  background-color: #28a745; /* green circle */
+}
+
+/* 🔴 Cancelled (only that step red) */
+.progressbar li.cancelled {
+  color: #dc3545;
+}
+.progressbar li.cancelled::before {
+  border-color: #dc3545;
+  background-color: #dc3545;
+}
+
+/* 🔥 Pulse animation when step activates */
+.pulse {
+  animation: pulseAnim 1s ease;
+}
+@keyframes pulseAnim {
+  0% { transform: scale(1); background-color: #28a745; }
+  50% { transform: scale(1.2); background-color: #218838; }
+  100% { transform: scale(1); background-color: #28a745; }
+}

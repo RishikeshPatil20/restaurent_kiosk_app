@@ -1,0 +1,28 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="sidebar p-3 flex-shrink-0">
+    <h3 class="mb-4">Admin Panel</h3>
+    <a href="/api/admin/dashboard">Dashboard</a>
+    <a href="/api/admin/users" class="active">Manage Users</a>
+    <a href="/api/admin/create-staff">Create Staff</a>
+    <a href="/api/admin/logout">Logout</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-grow-1 p-4 text-center">
+    <nav class="navbar navbar-custom mb-4">
+      <span class="navbar-brand mb-0 h1">
+        Welcome, <%= user.role %> 👋
+      </span>
+    </nav>
+
+    <div class="container">
+      <div class="alert alert-danger shadow-sm p-4">
+        <h2 class="mb-3">🗑 User Deleted Successfully</h2>
+        <p>The selected user has been permanently removed from the system.</p>
+        <a href="/api/admin/users" class="btn btn-primary mt-3">Back to Users</a>
+        <a href="/api/admin/dashboard" class="btn btn-outline-secondary mt-3">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>

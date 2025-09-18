@@ -1,0 +1,22 @@
+<div class="status-box text-center p-4 rounded shadow-sm 
+  <%= status.includes('success') ? 'alert alert-success' 
+  : status.includes('pending') ? 'alert alert-warning' 
+  : 'alert alert-danger' %>">
+  
+  <% if (status.includes("success")) { %>
+    <h2>✅ Payment Successful</h2>
+    <p>Thank you! Your payment for Order <strong>#<%= order.id %></strong> was successful.</p>
+    <p><strong>Total Paid:</strong> ₹<%= order.total_amount %></p>
+    <p>Your order is now being processed. 🍴</p>
+  <% } else if (status.includes("pending")) { %>
+    <h2>⏳ Payment Pending</h2>
+    <p>Your payment for Order <strong>#<%= order.id %></strong> is still processing.</p>
+    <p>Please wait a moment, or refresh this page later.</p>
+  <% } else { %>
+    <h2>❌ Payment Failed</h2>
+    <p>Unfortunately, your payment for Order <strong>#<%= order.id %></strong> failed.</p>
+    <p>Please try again, or contact support if the issue persists.</p>
+  <% } %>
+
+  <a href="/kiosk" class="btn btn-outline-dark mt-3">⬅ Back to Menu</a>
+</div>
