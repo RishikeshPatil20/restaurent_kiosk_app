@@ -5,13 +5,15 @@ A full-stack self-service restaurant ordering kiosk with a real-time kitchen das
 ## 📸 Screenshots
 <img width="1888" height="868" alt="image" src="https://github.com/user-attachments/assets/67d04179-5bf7-4504-b972-0d7c93606c9b" />
 
-| Kiosk Menu | Cart & Checkout |
-|---|---|
+| Kiosk Menu | 
+|---|
 | <img width="1900" height="861" alt="image" src="https://github.com/user-attachments/assets/2a08ddfa-721a-4a95-9ea9-de9c8f3ea3cd" />
 
-| Kitchen Dashboard | Admin Dashboard |
-|---|---|
+| Kitchen Dashboard |
+|---|
 |<img width="1901" height="866" alt="image" src="https://github.com/user-attachments/assets/e4ec85f4-9426-4101-96d8-7564c3d72780" />|
+| Admin Dashboard |
+|---|
 |<img width="1900" height="861" alt="image" src="https://github.com/user-attachments/assets/9c7eea8b-9b9f-4750-b6db-fc046610f9b4" />|
 
 ## ✨ Features
