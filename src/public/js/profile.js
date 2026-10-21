@@ -1,52 +1,37 @@
 // public/js/profile.js
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("👤 [CLIENT] Profile page loaded...");
+  const STEPS = ["pending", "accepted", "preparing", "ready", "served", "cancelled"];
 
+  // The server puts this socket in the user's private room based on the login cookie
   const socket = io();
-  console.log("🔌 [CLIENT] Socket connecting...");
 
-  socket.on("connect", () => {
-    console.log("✅ [CLIENT] Socket connected:", socket.id);
-    socket.emit("joinRoom", { role: "kiosk" });
-    console.log("📡 [CLIENT] Joined 'kiosk' room for live updates");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("❌ [CLIENT] Socket disconnected");
+  socket.on("connect_error", (err) => {
+    console.error("❌ [CLIENT] Live updates unavailable:", err.message);
   });
 
   // === Handle live order status updates ===
   socket.on("orderStatusUpdated", ({ orderId, status }) => {
-    console.log(`📡 [CLIENT] Profile got update: Order #${orderId} → ${status}`);
+    const tracker = document.getElementById(`tracker-${orderId}`);
+    if (!tracker) return;
 
-    const tracker = document.querySelector(`#tracker-${orderId}`);
-    if (!tracker) {
-      console.warn(`⚠️ [CLIENT] No tracker found for order #${orderId}`);
-      return;
-    }
-
-    const steps = [
-      "pending",
-      "accepted",
-      "preparing",
-      "ready",
-      "served",
-      "cancelled",
-    ];
-    const lis = tracker.querySelectorAll("li");
-
-    lis.forEach((li) => {
+    tracker.querySelectorAll("li").forEach((li) => {
       li.classList.remove("completed", "cancelled");
-      const step = li.getAttribute("data-step");
+      const step = li.dataset.step;
 
-      if (status === "cancelled" && step === "cancelled") {
-        li.classList.add("cancelled");
-      } else if (
-        status !== "cancelled" &&
-        steps.indexOf(step) <= steps.indexOf(status)
-      ) {
+      if (status === "cancelled") {
+        if (step === "cancelled") li.classList.add("cancelled");
+      } else if (STEPS.indexOf(step) <= STEPS.indexOf(status)) {
         li.classList.add("completed");
       }
     });
+  });
+
+  // === Handle payment confirmations ===
+  socket.on("paymentStatusUpdated", ({ orderId, paymentStatus }) => {
+    const badge = document.getElementById(`payment-${orderId}`);
+    if (badge && paymentStatus === "paid") {
+      badge.className = "badge text-bg-success";
+      badge.textContent = "Paid";
+    }
   });
 });

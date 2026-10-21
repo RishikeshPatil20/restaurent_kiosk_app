@@ -1,0 +1,19 @@
+<%# Order progress timeline. Expects: order %>
+<% const trackerSteps = ["pending", "accepted", "preparing", "ready", "served", "cancelled"]; %>
+<div class="order-tracker" id="tracker-<%= order.id %>">
+  <ul class="progressbar">
+    <% trackerSteps.forEach(step => { %>
+      <%
+        let stepClass = "";
+        if (order.status === "cancelled") {
+          if (step === "cancelled") stepClass = "cancelled"; // 🔴 Only Cancelled red
+        } else if (trackerSteps.indexOf(step) <= trackerSteps.indexOf(order.status)) {
+          stepClass = "completed"; // ✅ Completed steps green
+        }
+      %>
+      <li class="<%= stepClass %>" data-step="<%= step %>">
+        <%= step.charAt(0).toUpperCase() + step.slice(1) %>
+      </li>
+    <% }) %>
+  </ul>
+</div>

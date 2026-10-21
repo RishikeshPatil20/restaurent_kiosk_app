@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import { rupeesColumn } from "./money.js";
 
 export default (sequelize) => {
   const Menu = sequelize.define(
@@ -16,10 +17,7 @@ export default (sequelize) => {
       item_description: {
         type: DataTypes.TEXT,
       },
-      item_price: {
-        type: DataTypes.INTEGER, // was NUMBER, fixed
-        allowNull: false,
-      },
+      item_price: rupeesColumn("item_price", "item_price_paise"),
       item_category: {
         type: DataTypes.STRING,
         allowNull: false,

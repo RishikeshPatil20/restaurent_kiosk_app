@@ -1,114 +1,75 @@
 import express from "express";
+import { Op } from "sequelize";
 import { getMenusForEjs } from "../controllers/menusController.js";
+import { renderDashboard } from "../controllers/adminController.js";
+import { reconcileOrderPayment } from "../controllers/razorpayController.js";
 import { authenticateJWT } from "../middleware/jwtAuthMiddleware.js";
 import { authorizeRole } from "../middleware/roleMiddleware.js";
-import { User, Order, OrderItem, OrderEvent } from "../models/index.js";
+import { Order, OrderItem } from "../models/index.js";
+import { homeFor, parseId } from "../utils/request.js";
 
 const viewsRoutes = express.Router();
 
+// Logged-in users skip the login/register pages
+const redirectIfLoggedIn = (req, res, next) =>
+  res.locals.user ? res.redirect(homeFor(res.locals.user.role)) : next();
+
 // Public login page
-viewsRoutes.get("/login", (req, res) => {
-  return res.render("auth/login");
+viewsRoutes.get("/login", redirectIfLoggedIn, (req, res) => {
+  return res.render("auth/login", { title: "Login", error: null, email: "", role: "" });
 });
 
-// Kiosk dashboard (requires kiosk-user, staff, or admin)
+// Public registration page (kiosk accounts)
+viewsRoutes.get("/register", redirectIfLoggedIn, (req, res) => {
+  return res.render("auth/register", { title: "Register", error: null, email: "" });
+});
+
+// Kiosk ordering page
+viewsRoutes.get("/kiosk", authenticateJWT, authorizeRole(["kiosk"]), async (req, res) => {
+  const menus = await getMenusForEjs();
+  return res.render("kiosk/index", { title: "Menu", menus, user: req.user });
+});
+
+// Result page after checkout/payment
 viewsRoutes.get(
-  "/kiosk",
+  "/payment-status/:orderId",
   authenticateJWT,
-  authorizeRole(["kiosk", "staff", "admin"]),
+  authorizeRole(["kiosk"]),
   async (req, res) => {
-    try {
-      const menus = await getMenusForEjs();
-      return res.render("kiosk/index", { menus, user: req.user });
-    } catch (err) {
-      console.error("Error loading kiosk page:", err);
-      return res.status(500).send("Failed to load kiosk page");
+    const id = parseId(req.params.orderId);
+    const order = id && (await Order.findByPk(id));
+    if (!order || order.customer_id !== req.user.id) {
+      return res.status(404).render("errors/404", { title: "Not Found", url: req.originalUrl });
     }
+
+    // If the browser closed before /verify ran, ask Razorpay whether the payment went through
+    await reconcileOrderPayment(order, req.app.get("io"));
+
+    const status = order.payment_status === "paid" ? "success" : order.payment_status === "failed" ? "failed" : "pending";
+    return res.render("kiosk/paymentStatus", { title: "Payment", order, status, simulated: false });
   }
 );
 
-// Kitchen staff dashboard
-viewsRoutes.get(
-  "/staff",
-  authenticateJWT,
-  authorizeRole(["staff", "admin"]),
-  async (req, res) => {
-    try {
-      const orders = await Order.findAll({
-        include: [{ model: OrderItem, as: "items" }],
-        order: [["created_at", "DESC"]],
-      });
+// Kitchen staff dashboard: paid orders that still need work
+viewsRoutes.get("/staff", authenticateJWT, authorizeRole(["staff", "admin"]), async (req, res) => {
+  const orders = await Order.findAll({
+    where: {
+      payment_status: "paid",
+      status: { [Op.notIn]: ["served", "cancelled"] },
+    },
+    include: [{ model: OrderItem, as: "items" }],
+    order: [["created_at", "ASC"]],
+  });
 
-      return res.render("kitchen/dashboard", {
-        user: req.user,
-        orders,
-      });
-    } catch (err) {
-      console.error("Error loading staff dashboard:", err);
-      return res.status(500).send("Failed to load staff dashboard");
-    }
-  }
-);
+  return res.render("kitchen/dashboard", { title: "Kitchen", user: req.user, orders });
+});
 
 // Admin dashboard (admin only)
-viewsRoutes.get(
-  "/admin",
-  authenticateJWT,
-  authorizeRole(["admin"]),
-  async (req, res) => {
-    try {
-      // ✅ Total counts
-      const totalUsers = await User.count();
-      const totalOrders = await Order.count();
+viewsRoutes.get("/admin", authenticateJWT, authorizeRole(["admin"]), renderDashboard);
 
-      // ✅ Active staff (role = staff, maybe later add "online" field if you track)
-      const activeStaff = await User.count({ where: { role: "staff" } });
-
-      // ✅ Pending orders
-      const pendingOrders = await Order.count({ where: { status: "pending" } });
-
-      // ✅ Recent activity (last 5 order events)
-      const recentEvents = await OrderEvent.findAll({
-        limit: 5,
-        order: [["created_at", "DESC"]],
-      });
-
-      const recentActivity = recentEvents.map((event) => {
-        return `Order #${event.order_id} → ${event.event_type}`;
-      });
-
-      const stats = {
-        totalUsers,
-        totalOrders,
-        activeStaff,
-        pendingOrders,
-        recentActivity,
-      };
-
-      res.render("admin/dashboard", { user: req.user, stats });
-    } catch (err) {
-      console.error("Error loading admin dashboard:", err);
-      res.status(500).render("errors/500", {
-        statusCode: 500,
-        message: "Failed to load admin dashboard",
-        stack: process.env.NODE_ENV === "development" ? err.stack : null,
-      });
-    }
-  }
-);
-
-// API-style menu filter (could also be protected if you want)
-viewsRoutes.get("/menus/:category", async (req, res) => {
-  const category = req.params.category;
-  const menus = await getMenusForEjs();
-  const filtered = menus.filter((m) => m.item_category === category);
-
-  res.json(filtered);
-});
-
-// Default root: redirect to login
+// Default root: role home page, or login
 viewsRoutes.get("/", (req, res) => {
-  return res.redirect("/login");
+  return res.redirect(res.locals.user ? homeFor(res.locals.user.role) : "/login");
 });
 
 export default viewsRoutes;

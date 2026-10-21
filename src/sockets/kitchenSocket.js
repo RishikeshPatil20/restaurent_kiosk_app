@@ -1,22 +1,37 @@
 // backend/src/sockets/kitchenSocket.js
+import jwt from "jsonwebtoken";
+
+const readCookie = (header, name) => {
+  for (const part of (header || "").split(";")) {
+    const [key, ...rest] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(rest.join("="));
+  }
+  return null;
+};
+
+// Room naming shared with controllers that emit events
+export const userRoom = (userId) => `user:${userId}`;
+
 export default function kitchenSocket(io) {
+  // Only authenticated users may connect; rooms come from the verified token, not the client
+  io.use((socket, next) => {
+    const token = readCookie(socket.handshake.headers.cookie, "token");
+    try {
+      const { id, role } = jwt.verify(token, process.env.SECRET_KEY);
+      socket.data.user = { id, role };
+      next();
+    } catch {
+      next(new Error("unauthorized"));
+    }
+  });
+
   io.on("connection", (socket) => {
-    console.log("🔌 Client connected:", socket.id);
+    const { id, role } = socket.data.user;
 
-    socket.on("joinRoom", ({ role }) => {
-      if (role === "kiosk" || role === "kiosk-user") {
-        socket.join("kiosk");
-        console.log(`📱 Kiosk joined: ${socket.id}`);
-      } else if (role === "staff" || role === "admin") {
-        socket.join("kitchen");
-        console.log(`👨‍🍳 Kitchen staff joined: ${socket.id}`);
-      } else {
-        console.warn(`⚠️ Unknown role tried to join: ${role}`);
-      }
-    });
-
-    socket.on("disconnect", () => {
-      console.log("❌ Client disconnected:", socket.id);
-    });
+    if (role === "staff" || role === "admin") {
+      socket.join("kitchen");
+    }
+    // Every user gets a private room for updates about their own orders
+    socket.join(userRoom(id));
   });
 }

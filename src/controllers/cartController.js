@@ -1,113 +1,122 @@
 import { Cart, CartItem, Menu } from "../models/index.js";
+import { parseId } from "../utils/request.js";
+
+const MAX_QUANTITY = 50;
+
+const findActiveCart = (userId) =>
+  Cart.findOne({ where: { user_id: userId, status: "active" } });
+
+// Cart item lookup restricted to the caller's own active cart
+const findOwnCartItem = (itemId, userId) =>
+  CartItem.findOne({
+    where: { id: itemId },
+    include: [
+      { model: Cart, as: "cart", where: { user_id: userId, status: "active" }, attributes: [] },
+    ],
+  });
 
 export const getCart = async (req, res) => {
-  try {
-    let cart = await Cart.findOne({
-      where: { user_id: req.user.id, status: "active" },
-      include: [
-        {
-          model: CartItem,
-          as: "items",
-          include: [{ model: Menu, as: "menu" }], // ✅ menu details
-        },
-      ],
-    });
+  let cart = await Cart.findOne({
+    where: { user_id: req.user.id, status: "active" },
+    include: [
+      {
+        model: CartItem,
+        as: "items",
+        include: [{ model: Menu, as: "menu" }], // ✅ menu details
+      },
+    ],
+    order: [[{ model: CartItem, as: "items" }, "id", "ASC"]],
+  });
 
-    if (!cart) {
-      cart = await Cart.create({ user_id: req.user.id });
-    }
-
-    res.json(cart);
-  } catch (err) {
-    console.error("Get cart error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (!cart) {
+    cart = await Cart.create({ user_id: req.user.id });
+    cart.setDataValue("items", []);
   }
+
+  res.json(cart);
 };
 
 export const addToCart = async (req, res) => {
-  try {
-    const { menu_item_id, price } = req.body;
-    console.log("🛒 Add-to-Cart API hit:", req.body, "User:", req.user);
-
-    let cart = await Cart.findOne({
-      where: { user_id: req.user.id, status: "active" },
-    });
-    if (!cart) {
-      cart = await Cart.create({ user_id: req.user.id });
-    }
-
-    let item = await CartItem.findOne({
-      where: { cart_id: cart.id, menu_item_id },
-    });
-
-    if (item) {
-      item.quantity += 1;
-      await item.save();
-    } else {
-      item = await CartItem.create({
-        cart_id: cart.id,
-        menu_item_id,
-        price,
-        quantity: 1,
-      });
-    }
-
-    res.json({ message: "Item added to cart", item });
-  } catch (err) {
-    console.error("Add to cart error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  const menuItemId = parseId(req.body.menu_item_id);
+  if (!menuItemId) {
+    return res.status(400).json({ message: "A valid menu_item_id is required" });
   }
+
+  // Price always comes from the menu, never from the client
+  const menu = await Menu.findByPk(menuItemId);
+  if (!menu || !menu.available) {
+    return res.status(404).json({ message: "This item is not available" });
+  }
+
+  let cart = await findActiveCart(req.user.id);
+  if (!cart) {
+    cart = await Cart.create({ user_id: req.user.id });
+  }
+
+  let item = await CartItem.findOne({
+    where: { cart_id: cart.id, menu_item_id: menu.id },
+  });
+
+  if (item) {
+    if (item.quantity >= MAX_QUANTITY) {
+      return res.status(400).json({ message: `Maximum quantity is ${MAX_QUANTITY}` });
+    }
+    item.quantity += 1;
+    item.price = menu.item_price;
+    await item.save();
+  } else {
+    item = await CartItem.create({
+      cart_id: cart.id,
+      menu_item_id: menu.id,
+      price: menu.item_price,
+      quantity: 1,
+    });
+  }
+
+  res.json({ message: "Item added to cart", item });
 };
 
 export const removeFromCart = async (req, res) => {
-  try {
-    const id = req.params.id;
-    await CartItem.destroy({ where: { id } });
-    res.json({ message: "Item removed" });
-  } catch (err) {
-    console.error("Remove from cart error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  const id = parseId(req.params.id);
+  const item = id && (await findOwnCartItem(id, req.user.id));
+  if (!item) {
+    return res.status(404).json({ message: "Item not found" });
   }
+
+  await item.destroy();
+  res.json({ message: "Item removed" });
 };
+
 export const updateQuantity = async (req, res) => {
-  try {
-    const { id } = req.params; // cartItemId
-    const { quantity } = req.body;
+  const id = parseId(req.params.id); // cartItemId
+  const quantity = Number(req.body.quantity);
 
-    const item = await CartItem.findByPk(id, {
-      include: [{ model: Menu, as: "menu" }],
-    });
-
-    if (!item) {
-      return res.status(404).json({ message: "Item not found" });
-    }
-
-    if (quantity <= 0) {
-      await item.destroy();
-      return res.json({ message: "Item removed" });
-    }
-
-    item.quantity = quantity;
-    await item.save();
-
-    res.json({ message: "Quantity updated", item });
-  } catch (err) {
-    console.error("Update quantity error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (!Number.isInteger(quantity) || quantity < 0 || quantity > MAX_QUANTITY) {
+    return res
+      .status(400)
+      .json({ message: `Quantity must be a whole number between 0 and ${MAX_QUANTITY}` });
   }
+
+  const item = id && (await findOwnCartItem(id, req.user.id));
+  if (!item) {
+    return res.status(404).json({ message: "Item not found" });
+  }
+
+  if (quantity === 0) {
+    await item.destroy();
+    return res.json({ message: "Item removed" });
+  }
+
+  item.quantity = quantity;
+  await item.save();
+
+  res.json({ message: "Quantity updated", item });
 };
 
 export const clearCart = async (req, res) => {
-  try {
-    const cart = await Cart.findOne({
-      where: { user_id: req.user.id, status: "active" },
-    });
-    if (cart) {
-      await CartItem.destroy({ where: { cart_id: cart.id } });
-    }
-    res.json({ message: "Cart cleared" });
-  } catch (err) {
-    console.error("Clear cart error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  const cart = await findActiveCart(req.user.id);
+  if (cart) {
+    await CartItem.destroy({ where: { cart_id: cart.id } });
   }
+  res.json({ message: "Cart cleared" });
 };

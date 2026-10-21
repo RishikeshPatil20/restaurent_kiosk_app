@@ -1,6 +1,6 @@
-<%- include("./error", { 
-  code: 404, 
-  message: "Page not found", 
-  url: typeof url !== "undefined" ? url : null,
-  stack: null 
+<%- include("./error", {
+  code: 404,
+  message: "Page not found",
+  url: locals.url || null,
+  stack: null
 }) %>

@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import { rupeesColumn } from "./money.js";
 
 // models/CartItem.js
 export default (sequelize) => {
@@ -20,10 +21,7 @@ export default (sequelize) => {
       type: DataTypes.INTEGER,
       defaultValue: 1,
     },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
+    price: rupeesColumn("price", "price_paise"),
   });
 
   return CartItem;

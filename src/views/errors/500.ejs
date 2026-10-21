@@ -1,5 +1,6 @@
-<%- include("./error", { 
-  code: statusCode || 500, 
-  message: message || "Internal Server Error", 
-  stack: stack || null 
+<%- include("./error", {
+  code: locals.statusCode || 500,
+  message: locals.message || "Internal Server Error",
+  url: locals.url || null,
+  stack: locals.stack || null
 }) %>

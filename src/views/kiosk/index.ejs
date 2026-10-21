@@ -1,15 +1,18 @@
 <h4 class="mb-0 text-center py-3">🍴 Restaurant Menu</h4>
 
-<div class="container-fluid" style="margin-top:20px;">
+<div class="container-fluid kiosk-layout">
   <div class="row">
     <!-- Categories Sidebar -->
-    <div class="col-md-2 border-end sidebar">
+    <div class="col-md-3 col-lg-2 category-sidebar">
       <h5 class="mb-3">📂 Categories</h5>
-      <ul id="categories" class="list-group">
-        <% const categories=[...new Set(menus.map(m=> m.item_category))]; %>
-        <% categories.forEach(cat=> { %>
-          <li class="list-group-item p-1 border-0">
-            <button class="btn category-btn w-100" data-category="<%= cat %>">
+      <ul id="categories" class="list-unstyled category-list">
+        <% const categories = [...new Set(menus.map(m => m.item_category))]; %>
+        <li>
+          <button type="button" class="btn category-btn w-100 active" data-category="">All</button>
+        </li>
+        <% categories.forEach(cat => { %>
+          <li>
+            <button type="button" class="btn category-btn w-100" data-category="<%= cat %>">
               <%= cat %>
             </button>
           </li>
@@ -18,18 +21,20 @@
     </div>
 
     <!-- Main Menu Items -->
-    <div class="col-md-7">
+    <div class="col-md-5 col-lg-7">
       <h5 class="mb-3">🍽️ Menu Items</h5>
       <div id="items-container" class="row">
-        <% menus.forEach(item=> { %>
-          <div class="col-md-6 mb-3 menu-item" data-category="<%= item.item_category %>">
+        <% if (!menus.length) { %>
+          <p class="text-muted">No items are available right now.</p>
+        <% } %>
+        <% menus.forEach(item => { %>
+          <div class="col-lg-6 mb-3 menu-item" data-category="<%= item.item_category %>">
             <div class="card h-100 shadow-sm p-3 d-flex flex-column">
               <h6><%= item.item_name %></h6>
               <p class="mb-1 text-muted"><%= item.item_description %></p>
-              <p class="fw-bold">₹<%= item.item_price %></p>
-              <button class="btn btn-sm btn-outline-danger mt-auto add-to-cart"
-                      data-id="<%= item.id %>"
-                      data-price="<%= item.item_price %>">
+              <p class="fw-bold">₹<%= formatRupees(item.item_price) %></p>
+              <button type="button" class="btn btn-sm btn-outline-danger mt-auto add-to-cart"
+                      data-id="<%= item.id %>">
                 ➕ Add to Cart
               </button>
             </div>
@@ -39,29 +44,28 @@
     </div>
 
     <!-- Cart Sidebar -->
-    <aside class="col-md-3 border-start cart">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0">🛒 Your Cart</h4>
-        <!-- 🚪 Logout Button -->
-        <form action="/api/auth/logout" method="POST">
-          <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
-        </form>
-      </div>
+    <aside class="col-md-4 col-lg-3 cart" aria-label="Your cart">
+      <h4 class="m-0 mb-3">🛒 Your Cart</h4>
+
+      <div id="cart-error" class="alert alert-danger py-2 d-none" role="alert"></div>
 
       <ul id="cart-items" class="list-group mb-3"></ul>
+      <p id="cart-empty" class="text-muted small">Your cart is empty.</p>
       <div class="d-flex justify-content-between fw-bold mb-3">
         <span>Total:</span>
         <span id="cart-total">₹0</span>
       </div>
       <!-- ✅ Secure: this only posts to /checkout -->
-      <form action="/checkout" method="POST">
-        <button type="submit" class="btn btn-outline-dark w-100">
-          <div class="cart-container d-flex justify-content-between align-items-center">
+      <form action="/checkout" method="POST" id="checkout-form">
+        <button type="submit" id="checkout-button" class="btn btn-danger w-100" disabled>
+          <span class="d-flex justify-content-between align-items-center">
             <span>Proceed to Checkout</span>
             <span id="cart-count" class="cart-badge">0</span>
-          </div>
+          </span>
         </button>
       </form>
     </aside>
   </div>
 </div>
+
+<script src="/js/script.js"></script>

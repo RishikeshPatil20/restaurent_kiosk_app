@@ -1,15 +1,8 @@
-<div class="d-flex">
-  <!-- Sidebar -->
-  <div class="sidebar p-3 flex-shrink-0">
-    <h3 class="mb-4">Admin Panel</h3>
-    <a href="/api/admin/dashboard" class="active">Dashboard</a>
-    <a href="/api/admin/users">Manage Users</a>
-    <a href="/api/admin/create-staff">Create Staff</a>
-    <a href="/api/admin/logout">Logout</a>
-  </div>
+<div class="admin-layout">
+  <%- include("../partials/admin-sidebar", { active: "dashboard" }) %>
 
   <!-- Main content -->
-  <div class="flex-grow-1 p-4">
+  <div class="admin-main">
     <nav class="navbar navbar-custom mb-4">
       <span class="navbar-brand mb-0 h1">
         Welcome, <%= user.role %> 👋
@@ -19,25 +12,33 @@
     <div class="container-fluid">
       <div class="row g-4">
         <!-- Total Users -->
-        <div class="col-md-4">
+        <div class="col-sm-6 col-xl-3">
           <div class="card card-dashboard p-3">
             <h5>Total Users</h5>
             <p class="display-6 text-primary"><%= stats.totalUsers %></p>
           </div>
         </div>
 
-        <!-- Active Staff -->
-        <div class="col-md-4">
+        <!-- Staff -->
+        <div class="col-sm-6 col-xl-3">
           <div class="card card-dashboard p-3">
-            <h5>Active Staff</h5>
+            <h5>Staff Members</h5>
             <p class="display-6 text-success"><%= stats.staffCount %></p>
           </div>
         </div>
 
-        <!-- Pending Orders -->
-        <div class="col-md-4">
+        <!-- Total Orders -->
+        <div class="col-sm-6 col-xl-3">
           <div class="card card-dashboard p-3">
-            <h5>Pending Orders</h5>
+            <h5>Total Orders</h5>
+            <p class="display-6 text-secondary"><%= stats.totalOrders %></p>
+          </div>
+        </div>
+
+        <!-- Orders in the kitchen -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="card card-dashboard p-3">
+            <h5>Orders in Progress</h5>
             <p class="display-6 text-warning"><%= stats.pendingOrders %></p>
           </div>
         </div>
@@ -48,11 +49,15 @@
         <div class="col-md-12">
           <div class="card card-dashboard p-3">
             <h5>Recent Activity</h5>
-            <ul class="list-group list-group-flush">
-              <% stats.recentActivity.forEach(activity => { %>
-                <li class="list-group-item"><%= activity %></li>
-              <% }) %>
-            </ul>
+            <% if (stats.recentActivity.length) { %>
+              <ul class="list-group list-group-flush">
+                <% stats.recentActivity.forEach(activity => { %>
+                  <li class="list-group-item"><%= activity %></li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <p class="text-muted m-0">No activity yet.</p>
+            <% } %>
           </div>
         </div>
       </div>

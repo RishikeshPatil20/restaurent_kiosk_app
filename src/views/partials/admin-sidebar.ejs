@@ -1,0 +1,8 @@
+<%# Admin navigation. Expects: active ("dashboard" | "users" | "create-staff") %>
+<nav class="admin-sidebar p-3 flex-shrink-0" aria-label="Admin">
+  <h3 class="mb-4">Admin Panel</h3>
+  <a href="/admin" class="<%= active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+  <a href="/api/admin/users" class="<%= active === 'users' ? 'active' : '' %>">Manage Users</a>
+  <a href="/api/admin/create-staff" class="<%= active === 'create-staff' ? 'active' : '' %>">Create Staff</a>
+  <a href="/staff">Kitchen</a>
+</nav>

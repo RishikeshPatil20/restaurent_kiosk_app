@@ -17,7 +17,6 @@ ordersRoutes.get("/my", authenticateJWT, authorizeRole(["kiosk"]), getMyOrders);
 
 // Staff/Admin routes
 ordersRoutes.get("/", authenticateJWT, authorizeRole(["staff", "admin"]), getAllOrders);
-// ordersRoutes.put("/:id/status", authenticateJWT, authorizeRole(["staff", "admin"]), updateOrderStatus);
 ordersRoutes.patch("/:id/status", authenticateJWT, authorizeRole(["staff", "admin"]), updateOrderStatus);
 
 // Shared (kiosk can see own, staff/admin can see any)

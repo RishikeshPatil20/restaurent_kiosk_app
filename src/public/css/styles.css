@@ -1,4 +1,6 @@
-/* ================== GLOBAL BASE CSS ================== */ 
+/* ================== GLOBAL BASE CSS ================== */
+/* Loaded after Bootstrap. Avoid overriding Bootstrap's generic classes (.btn, .card, ...)
+   globally; scope project styles to page-specific classes instead. */
 body {
   display: flex;
   flex-direction: column;
@@ -7,12 +9,18 @@ body {
   background-color: #f8f9fa;
 }
 
+.page-content {
+  flex: 1 0 auto;
+}
+
 /* ===== Header CSS ===== */
 .main-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
+  gap: 10px;
+  padding: 12px 30px;
   background-color: #f8f8f8;
   border-bottom: 1px solid #ddd;
 }
@@ -21,6 +29,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  color: #333;
+  text-decoration: none;
 }
 
 .brand-logo {
@@ -31,33 +41,25 @@ body {
 .brand-name {
   margin: 0;
   font-size: 1.5rem;
+  font-weight: 600;
   color: #333;
 }
 
 .header-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
-/* Search Bar */
-.search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
+.header-link {
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
 }
 
-.search-input {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-}
-
-.search-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: -30px;
+.header-link:hover {
+  color: #dc3545;
 }
 
 .profile-image {
@@ -67,90 +69,57 @@ body {
   border: 2px solid #333;
 }
 
+@media (max-width: 575.98px) {
+  .main-header {
+    padding: 10px 16px;
+  }
+  .brand-name {
+    font-size: 1.15rem;
+  }
+  .header-actions {
+    gap: 10px;
+  }
+}
+
 /* ===== Footer CSS ===== */
 footer {
   background-color: #222;
   color: #fff;
-  padding: 25px 15px;
+  padding: 20px 16px;
   text-align: center;
-  margin-top: auto;
   font-size: 0.95rem;
 }
 
 .footer-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.footer-links a,
-.social-icons a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 12px;
-  transition: color 0.3s ease-in-out;
-}
-
-.footer-links a:hover,
-.social-icons a:hover {
-  color: #dc3545;
-}
-
-.social-icons a {
-  font-size: 1.2rem;
-}
-
-/* Responsive Footer */
-@media (min-width: 768px) {
-  .footer-container {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-}
-
-/* ===== Category Buttons (Red & White Theme) ===== */
-.category-btn {
-  background-color: #fff;
-  color: #dc3545;
-  border: 2px solid #dc3545;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-weight: 500;
-  transition: all 0.3s ease-in-out;
-}
-
-.category-btn:hover,
-.category-btn.active {
-  background-color: #dc3545;
-  color: #fff;
-  transform: scale(1.05);
-  box-shadow: 0px 3px 6px rgba(220, 53, 69, 0.3);
-}
-
-/* ===== Login Page ===== */
-.login-container {
+/* ===== Login / Register Pages ===== */
+.auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-grow: 1;
-  padding: 40px 20px;
-  background: #f8f9fa;
+  padding: 40px 16px;
 }
 
-.login-container .card {
+.auth-card {
   background: #fff;
   padding: 30px 40px;
+  border: none;
   border-radius: 12px;
   box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
 }
 
-.login-container .title {
+@media (max-width: 575.98px) {
+  .auth-card {
+    padding: 24px 20px;
+  }
+}
+
+.auth-title {
   text-align: center;
   font-size: 1.8rem;
   color: #dc3545;
@@ -187,39 +156,31 @@ footer {
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
 }
 
-/* Button */
-.btn {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  background-color: #dc3545;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+/* ================== ADMIN DASHBOARD CSS ================== */
+.admin-layout {
+  display: flex;
+  min-height: 100%;
 }
 
-.btn:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
-  box-shadow: 0px 4px 10px rgba(220, 53, 69, 0.3);
+.admin-main {
+  flex-grow: 1;
+  min-width: 0; /* lets tables scroll instead of stretching the page */
+  padding: 1.5rem;
 }
 
-/* ================== DASHBOARD CSS ================== */
-.sidebar {
+.admin-sidebar {
   background-color: #343a40;
   color: #fff;
   min-width: 220px;
-  height: 100vh;
-  position: sticky;
-  top: 0;
+  min-height: calc(100vh - 66px);
   border-right: 2px solid #dc3545;
 }
 
-.sidebar a {
+.admin-sidebar h3 {
+  color: #fff;
+}
+
+.admin-sidebar a {
   display: block;
   padding: 12px 15px;
   margin: 8px 0;
@@ -229,28 +190,53 @@ footer {
   transition: all 0.3s ease-in-out;
 }
 
-.sidebar a:hover,
-.sidebar a.active {
+.admin-sidebar a:hover,
+.admin-sidebar a.active {
   background-color: #dc3545;
   color: #fff;
 }
 
+/* On phones the sidebar becomes a horizontal menu above the content */
+@media (max-width: 767.98px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    border-right: none;
+    border-bottom: 2px solid #dc3545;
+  }
+  .admin-sidebar h3 {
+    width: 100%;
+    font-size: 1.1rem;
+    margin-bottom: 4px !important;
+  }
+  .admin-sidebar a {
+    margin: 0;
+    padding: 6px 12px;
+  }
+  .admin-main {
+    padding: 1rem;
+  }
+}
+
 /* ================== KIOSK MENU PAGE CSS ================== */
-body.kiosk-page {
-  background-color: #fff;
-}
-
-#categories .list-group-item::before {
-  content: none !important;
-}
-
-.sidebar {
+.category-sidebar {
   background: #fff;
   border-right: 1px solid #eee;
   padding: 20px;
 }
 
-#categories .btn {
+.category-list li {
+  margin-bottom: 6px;
+}
+
+.category-btn {
   text-align: left;
   border-radius: 6px;
   padding: 8px 12px;
@@ -261,12 +247,11 @@ body.kiosk-page {
   transition: all 0.3s ease-in-out;
 }
 
-#categories .btn:hover,
-#categories .btn.active {
+.category-btn:hover,
+.category-btn.active {
   background-color: #dc3545;
   color: #fff;
   border-color: #dc3545;
-  transform: translateX(5px);
 }
 
 .menu-item .card {
@@ -288,50 +273,119 @@ body.kiosk-page {
   padding: 20px;
   border-radius: 8px;
   box-shadow: -2px 0 8px rgba(0,0,0,0.05);
+  align-self: flex-start;
+  position: sticky;
+  top: 12px;
 }
 
 .cart h4 {
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 15px;
   color: #333;
 }
 
 .cart-badge {
-  background-color: #dc3545;
-  color: #fff;
+  background-color: #fff;
+  color: #dc3545;
   font-weight: bold;
   border-radius: 50%;
-  padding: 4px 10px;
+  padding: 2px 9px;
   font-size: 0.9rem;
 }
 
-/* ================== PAYMENT PAGE CSS ================== */
-body.payment-page {
-  background-color: #f8f9fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (max-width: 767.98px) {
+  /* Categories become a horizontal, scrollable chip row */
+  .category-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding: 12px 16px;
+  }
+  .category-sidebar h5 {
+    display: none;
+  }
+  .category-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin: 0;
+    padding-bottom: 4px;
+  }
+  .category-list li {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+  .category-btn {
+    white-space: nowrap;
+    width: auto !important;
+  }
+
+  /* Keep the cart and checkout reachable while scrolling the menu */
+  .cart {
+    position: sticky;
+    top: auto;
+    bottom: 0;
+    z-index: 10;
+    max-height: 45vh;
+    overflow-y: auto;
+    border-left: none;
+    border-top: 2px solid #dc3545;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.12);
+    padding: 12px 16px;
+  }
 }
 
-.payment-box {
+/* ================== KITCHEN BOARD ================== */
+/* Cards in a row share one height; long item lists scroll instead of stretching the card */
+.kitchen-order .card {
+  height: 100%;
+}
+
+.kitchen-order .card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.kitchen-items {
+  max-height: 7.5rem;
+  overflow-y: auto;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.order-actions {
+  margin-top: auto; /* keep buttons aligned at the bottom of every card */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.order-actions .btn-next {
+  flex: 1 1 auto;
+}
+
+/* ================== PAYMENT PAGES ================== */
+.payment-box,
+.status-box {
   text-align: center;
   background: #fff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  max-width: 420px;
   width: 100%;
 }
 
-.payment-box h2 {
-  color: #333;
-  margin-bottom: 10px;
+.payment-box {
+  max-width: 420px;
 }
 
-.payment-box p {
-  color: #555;
-  margin: 6px 0;
+.status-box {
+  max-width: 480px;
+}
+
+.status-box h2 {
+  margin-bottom: 12px;
+  font-weight: bold;
 }
 
 .loader {
@@ -349,80 +403,15 @@ body.payment-page {
   100% { transform: rotate(360deg); }
 }
 
-.payment-box .btn {
-  margin-top: 20px;
-  display: inline-block;
-  padding: 10px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  background-color: #dc3545;
-  color: #fff;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-
-.payment-box .btn:hover {
-  background-color: #b02a37;
-}
-
-/* ================== PAYMENT STATUS PAGE ================== */
-body.payment-status-page {
-  background-color: #f8f9fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.status-box {
-  text-align: center;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  max-width: 480px;
-  width: 100%;
-}
-
-.status-box.success {
-  border-top: 6px solid #28a745; /* green */
-}
-
-.status-box.failed {
-  border-top: 6px solid #dc3545; /* red */
-}
-
-.status-box.pending {
-  border-top: 6px solid #ffc107; /* yellow for pending */
-}
-
-.status-box h2 {
-  margin-bottom: 12px;
-  font-weight: bold;
-}
-
-.status-box p {
-  font-size: 1rem;
-  margin-bottom: 20px;
-}
-
-.status-box .btn {
-  margin-top: 10px;
-}
-
 /* ================== PROFILE PAGE ================== */
-body.profile-page {
-  background-color: #f8f9fa;
-  padding: 40px 20px;
-}
-
 .profile-container {
   display: flex;
   gap: 2rem;
   align-items: flex-start;
-  justify-content: flex-start;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  padding: 2rem 16px;
 }
 
 .profile-box {
@@ -434,14 +423,13 @@ body.profile-page {
   text-align: center;
 }
 
-.orders-container {
-  flex: 0 0 65%;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 25px;
+.orders-box {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.profile-box h2 {
+.profile-box h2,
+.orders-box h2 {
   color: #dc3545;
   margin-bottom: 20px;
   font-weight: 600;
@@ -451,138 +439,35 @@ body.profile-page {
   margin: 10px 0;
   color: #333;
   font-size: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .profile-box strong {
   color: #555;
 }
 
-.profile-box .btn-danger {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-}
-
-.orders-container h2 {
-  margin-bottom: 20px;
-  color: #dc3545;
-  font-weight: 600;
-  text-align: center;
-}
-
-.orders-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: 25px;
-}
-
 .order-card {
   background: #fff;
+  border: none;
   border-radius: 12px;
-  padding: 25px;
+  padding: 20px;
   box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease-in-out;
-}
-
-.order-card:hover {
-  transform: translateY(-4px);
-}
-
-.order-card h3 {
-  margin: 0 0 12px;
-  color: #333;
-  font-size: 1.3rem;
-}
-
-.order-meta {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 12px;
-}
-
-.order-items {
-  margin-top: 18px;
-}
-
-.order-items h4 {
-  margin-bottom: 10px;
-  font-size: 1.05rem;
-  color: #444;
-}
-
-.order-items ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.order-items li {
-  background: #f8f9fa;
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  font-size: 0.95rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* ================== STATUS BADGES ================== */
-.status-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-left: 8px;
-}
-
-.status-pending {
-  background: #ffc107;
-  color: #fff;
-}
-
-.status-success {
-  background: #28a745;
-  color: #fff;
-}
-
-.status-failed {
-  background: #dc3545;
-  color: #fff;
 }
 
 @media (max-width: 900px) {
   .profile-container {
     flex-direction: column;
   }
-  .orders-container,
-  .profile-box {
-    flex: 100%;
-    max-width: 100%;
-    margin: 0;
+  .profile-box,
+  .orders-box {
+    flex: 1 1 auto;
+    width: 100%;
   }
 }
 
 .back-to-menu {
   margin-top: 25px;
   text-align: center;
-}
-
-.back-to-menu .btn {
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease-in-out;
-}
-
-.back-to-menu .btn:hover {
-  background-color: #dc3545;
-  color: #fff;
-  border-color: #dc3545;
 }
 
 /* ================== ORDER TIMELINE ================== */
@@ -596,20 +481,24 @@ body.profile-page {
 
 .progressbar li {
   flex: 1;
+  min-width: 0;
   position: relative;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #999;
+  overflow-wrap: anywhere;
 }
 
 /* Default circle (grey outline) */
 .progressbar li::before {
   content: "";
+  position: relative;
+  z-index: 1; /* above the connector line */
   width: 20px;
   height: 20px;
   border: 2px solid #ccc;
   display: block;
-  margin: 0 auto 10px;
+  margin: 0 auto 8px;
   border-radius: 50%;
   background-color: #fff;
   transition: all 0.3s ease;
@@ -624,7 +513,7 @@ body.profile-page {
   background-color: #ccc;
   top: 10px;
   left: -50%;
-  z-index: -1;
+  z-index: 0;
 }
 
 .progressbar li:first-child::after {
@@ -639,6 +528,9 @@ body.profile-page {
   border-color: #28a745;
   background-color: #28a745; /* green circle */
 }
+.progressbar li.completed::after {
+  background-color: #28a745;
+}
 
 /* 🔴 Cancelled (only that step red) */
 .progressbar li.cancelled {
@@ -649,12 +541,15 @@ body.profile-page {
   background-color: #dc3545;
 }
 
-/* 🔥 Pulse animation when step activates */
-.pulse {
-  animation: pulseAnim 1s ease;
-}
-@keyframes pulseAnim {
-  0% { transform: scale(1); background-color: #28a745; }
-  50% { transform: scale(1.2); background-color: #218838; }
-  100% { transform: scale(1); background-color: #28a745; }
+@media (max-width: 575.98px) {
+  .progressbar li {
+    font-size: 0.65rem;
+  }
+  .progressbar li::before {
+    width: 14px;
+    height: 14px;
+  }
+  .progressbar li::after {
+    top: 7px;
+  }
 }

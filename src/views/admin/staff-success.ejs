@@ -1,15 +1,8 @@
-<div class="d-flex">
-  <!-- Sidebar -->
-  <div class="sidebar p-3 flex-shrink-0">
-    <h3 class="mb-4">Admin Panel</h3>
-    <a href="/api/admin/dashboard">Dashboard</a>
-    <a href="/api/admin/users">Manage Users</a>
-    <a href="/api/admin/create-staff" class="active">Create Staff</a>
-    <a href="/api/admin/logout">Logout</a>
-  </div>
+<div class="admin-layout">
+  <%- include("../partials/admin-sidebar", { active: "create-staff" }) %>
 
   <!-- Main content -->
-  <div class="flex-grow-1 p-4 text-center">
+  <div class="admin-main text-center">
     <nav class="navbar navbar-custom mb-4">
       <span class="navbar-brand mb-0 h1">
         Welcome, <%= user.role %> 👋
@@ -19,9 +12,11 @@
     <div class="container">
       <div class="alert alert-success shadow-sm p-4">
         <h2 class="mb-3">🎉 Staff Created Successfully!</h2>
-        <p>The new staff member has been added to the system.</p>
-        <a href="/api/admin/users" class="btn btn-primary mt-3">View All Users</a>
-        <a href="/api/admin/create-staff" class="btn btn-outline-success mt-3">Add Another</a>
+        <p><strong><%= staff.email %></strong> can now log in as staff.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+          <a href="/api/admin/users" class="btn btn-primary">View All Users</a>
+          <a href="/api/admin/create-staff" class="btn btn-outline-success">Add Another</a>
+        </div>
       </div>
     </div>
   </div>

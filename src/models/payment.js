@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import { rupeesColumn } from "./money.js";
 
 export default (sequelize) => {
   const Payment = sequelize.define(
@@ -13,9 +14,11 @@ export default (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      amount: {
-        type: DataTypes.INTEGER,
+      amount: rupeesColumn("amount", "amount_paise"),
+      provider: {
+        type: DataTypes.STRING,
         allowNull: false,
+        defaultValue: "dummy",
       },
       status: {
         type: DataTypes.ENUM("initiated", "success", "failed", "refunded"),
