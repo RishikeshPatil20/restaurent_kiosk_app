@@ -1,78 +1,134 @@
 import bcrypt from "bcrypt";
-import { User } from "../models/index.js";
+import { Op } from "sequelize";
+import { User, Order, OrderEvent, Cart, CartItem } from "../models/index.js";
+import { MIN_PASSWORD_LENGTH, parseId } from "../utils/request.js";
+
+const USERS_NOTICES = {
+  deleted: { type: "success", text: "User deleted successfully." },
+  "not-found": { type: "danger", text: "That user no longer exists." },
+  self: { type: "danger", text: "You can’t delete your own account." },
+};
+
+const describeEvent = (event) => {
+  if (event.event_type === "status_update") {
+    return `Order #${event.order_id} → ${event.payload?.newStatus ?? "updated"}`;
+  }
+  if (event.event_type === "payment_success") {
+    return `Order #${event.order_id} → paid`;
+  }
+  return `Order #${event.order_id} → ${event.event_type}`;
+};
+
+export const getDashboardStats = async () => {
+  const [totalUsers, staffCount, totalOrders, pendingOrders, recentEvents] = await Promise.all([
+    User.count(),
+    User.count({ where: { role: "staff" } }),
+    Order.count(),
+    Order.count({ where: { status: { [Op.in]: ["pending", "accepted", "preparing"] }, payment_status: "paid" } }),
+    OrderEvent.findAll({ limit: 8, order: [["created_at", "DESC"]] }),
+  ]);
+
+  return {
+    totalUsers,
+    staffCount,
+    totalOrders,
+    pendingOrders,
+    recentActivity: recentEvents.map(describeEvent),
+  };
+};
+
+// ================== Pages ==================
+export const renderDashboard = async (req, res) => {
+  const stats = await getDashboardStats();
+  res.render("admin/dashboard", { title: "Admin Dashboard", user: req.user, stats });
+};
+
+export const renderUsers = async (req, res) => {
+  const users = await User.findAll({
+    attributes: ["id", "email", "role", "createdAt"],
+    order: [["created_at", "DESC"]],
+  });
+
+  res.render("admin/manage-users-admin", {
+    title: "Manage Users",
+    users,
+    user: req.user,
+    notice: USERS_NOTICES[req.query.notice] ?? null,
+  });
+};
+
+export const renderCreateStaff = (req, res) => {
+  res.render("admin/create-staff-admin", {
+    title: "Create Staff",
+    user: req.user,
+    error: null,
+    email: "",
+  });
+};
 
 // Admin only: create staff
 export const createStaff = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const email = typeof req.body.email === "string" ? req.body.email.trim() : "";
+  const { password } = req.body;
 
-    const existing = await User.findOne({ where: { email } });
-    if (existing) return res.status(409).json({ message: "User already exists" });
-
-    const hash = await bcrypt.hash(password, 10);
-
-    const staff = await User.create({
+  const fail = (status, error) =>
+    res.status(status).render("admin/create-staff-admin", {
+      title: "Create Staff",
+      user: req.user,
+      error,
       email,
-      password_hash: hash,
-      role: "staff",
     });
 
-    res.status(201).json({
-      message: "Staff created successfully",
-      user: { id: staff.id, email: staff.email, role: staff.role },
-    });
-  } catch (err) {
-    console.error("Create staff error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (!email || !password) return fail(400, "Email and password are required");
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return fail(400, `Password must be at least ${MIN_PASSWORD_LENGTH} characters`);
   }
-};
-export const getDashboardStats = async () => {
-  try {
-    const totalUsers = await User.count(); // total users
-    const staffCount = await User.count({ where: { role: "staff" } }); // staff only
 
-    // ⚠️ Replace with actual DB queries for orders table when ready
-    const pendingOrders = 8;
+  const existing = await User.findOne({ where: { email } });
+  if (existing) return fail(409, "A user with this email already exists");
 
-    // Example recent activity — you’ll later replace with real activity logs table
-    const recentActivity = [
-      "User John Doe registered a kiosk account",
-      "Staff Jane updated menu item 'Paneer Butter Masala'",
-      "Order #1023 marked as completed",
-    ];
+  const hash = await bcrypt.hash(password, 10);
+  const staff = await User.create({
+    email,
+    password_hash: hash,
+    role: "staff",
+  });
 
-    return { totalUsers, staffCount, pendingOrders, recentActivity };
-  } catch (err) {
-    console.error("Dashboard stats error:", err);
-    throw err;
-  }
+  res.status(201).render("admin/staff-success", {
+    title: "Staff Created",
+    user: req.user,
+    staff,
+  });
 };
 
+// ================== JSON API ==================
 export const listUsers = async (req, res) => {
-  try {
-    const users = await User.findAll({
-      attributes: ["id", "email", "role", "created_at"],
-    });
+  const users = await User.findAll({
+    attributes: ["id", "email", "role", "createdAt"],
+  });
 
-    res.json(users);
-  } catch (err) {
-    console.error("List users error:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
+  res.json(users);
 };
 
 // Admin only: delete a user
 export const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByPk(id);
+  const id = parseId(req.params.id);
 
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    await user.destroy();
-    res.json({ message: "User deleted successfully" });
-  } catch (err) {
-    console.error("Delete user error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  if (id === req.user.id) {
+    return res.redirect("/api/admin/users?notice=self");
   }
+
+  const user = id && (await User.findByPk(id));
+  if (!user) return res.redirect("/api/admin/users?notice=not-found");
+
+  // Remove the user's carts; orders are kept for history
+  const carts = await Cart.findAll({ where: { user_id: user.id }, attributes: ["id"] });
+  const cartIds = carts.map((c) => c.id);
+  if (cartIds.length) {
+    await CartItem.destroy({ where: { cart_id: cartIds } });
+    await Cart.destroy({ where: { id: cartIds } });
+  }
+
+  await user.destroy();
+  res.redirect("/api/admin/users?notice=deleted");
 };

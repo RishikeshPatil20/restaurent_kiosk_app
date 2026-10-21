@@ -13,6 +13,8 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "prod": "pm2 start src/server.js --name restaurant-kiosk",
+    "migrate": "node src/migrate.js",
+    "seed": "node src/seed.js",
     "lint": "eslint .",
     "test": "echo \"No tests configured yet\" && exit 0"
   },

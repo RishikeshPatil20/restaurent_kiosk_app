@@ -1,13 +1,13 @@
 // backend/src/server.js
 import http from "http";
 import { Server } from "socket.io";
-import app from "./app.js";
+import app, { corsOrigins } from "./app.js";
 import kitchenSocket from "./sockets/kitchenSocket.js";
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: { origin: corsOrigins, credentials: true },
 });
 
 // Attach io to app so controllers can use it

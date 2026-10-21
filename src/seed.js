@@ -348,10 +348,10 @@ const seedDatabase = async () => {
       customer_name: "John Doe",
       customer_id: kioskUser.id,
       notes: "Extra chutney with samosa",
-      order_code: 1001,
+      order_code: 1, // first token of the day
       status: "pending",
       total_amount: 0, // will update below
-      payment_status: "unpaid",
+      payment_status: "paid", // paid orders show up on the kitchen board
     });
 
     const createdItems = await OrderItem.bulkCreate([
@@ -385,10 +385,10 @@ const seedDatabase = async () => {
     await Payment.create({
       order_id: order.id,
       amount: computedTotal,
-      status: "initiated",
+      provider: "dummy",
+      status: "success",
       transaction_id: "txn-12345",
-      upi_id: "customer@upi",
-      provider_response: { mock: "UPI_INITIATED" },
+      provider_response: { mock: "SEEDED_PAYMENT" },
     });
 
     console.log(

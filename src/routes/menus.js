@@ -13,11 +13,14 @@ import { authorizeRole } from "../middleware/roleMiddleware.js";
 
 const menusRoutes = express.Router();
 
-// ================= Public Routes =================
-menusRoutes.get("/", getMenus);
-menusRoutes.get("/:id", getMenuById);
-
 // ================= Admin Routes =================
+// Must be registered before "/:id", otherwise "admin" is treated as a menu id
+menusRoutes.get(
+  "/admin/all",
+  authenticateJWT,
+  authorizeRole(["admin"]),
+  getAllMenusAdmin
+);
 menusRoutes.post("/", authenticateJWT, authorizeRole(["admin"]), createMenu);
 menusRoutes.put("/:id", authenticateJWT, authorizeRole(["admin"]), updateMenu);
 menusRoutes.delete(
@@ -26,12 +29,10 @@ menusRoutes.delete(
   authorizeRole(["admin"]),
   deleteMenu
 );
-menusRoutes.get(
-  "/admin/all",
-  authenticateJWT,
-  authorizeRole(["admin"]),
-  getAllMenusAdmin
-);
+
+// ================= Public Routes =================
+menusRoutes.get("/", getMenus);
+menusRoutes.get("/:id", getMenuById);
 
 // ================= Admin or Staff Routes =================
 menusRoutes.patch(

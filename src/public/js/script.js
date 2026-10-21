@@ -1,237 +1,166 @@
-// This will fail if script is above button
-// because button is not yet parsed
-// document.getElementById("myBtn").addEventListener("click", () => console.log("clicked"));
-// This will always work as first we are loading Dom by - DOMContentLoaded
-// this is for index.js
 // public/js/script.js
-// public/js/script.js
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("📱 [CLIENT] Kiosk page loaded...");
+// Kiosk menu page only (loaded by views/kiosk/index.ejs)
+(() => {
+  const itemsContainer = document.getElementById("items-container");
+  if (!itemsContainer) return;
 
-  const buttons = document.querySelectorAll(".category-btn");
-  const itemsContainer = document.querySelector("#items-container");
+  const categoryButtons = document.querySelectorAll(".category-btn");
   const cartList = document.getElementById("cart-items");
+  const cartEmpty = document.getElementById("cart-empty");
   const cartCount = document.getElementById("cart-count");
   const cartTotal = document.getElementById("cart-total");
+  const cartError = document.getElementById("cart-error");
+  const checkoutForm = document.getElementById("checkout-form");
+  const checkoutButton = document.getElementById("checkout-button");
 
-  // === Refresh Cart from Server ===
-  async function refreshCart() {
-    try {
-      const res = await fetch("/api/cart");
-      const cart = await res.json();
+  const formatRupees = (rupees) => {
+    const paise = Math.round(Number(rupees) * 100);
+    return paise % 100 === 0 ? String(paise / 100) : (paise / 100).toFixed(2);
+  };
 
-      cartList.innerHTML = "";
-      let totalItems = 0;
-      let totalPrice = 0;
+  const showError = (message) => {
+    cartError.textContent = message;
+    cartError.classList.toggle("d-none", !message);
+  };
 
-      if (cart && cart.items) {
-        cart.items.forEach((item) => {
-          totalItems += item.quantity;
-          totalPrice += item.price * item.quantity;
+  // JSON fetch that sends the user back to login when the session has expired
+  async function api(url, options = {}) {
+    const res = await fetch(url, {
+      ...options,
+      headers: { Accept: "application/json", "Content-Type": "application/json", ...options.headers },
+    });
+    if (res.status === 401) {
+      window.location.href = "/login";
+      throw new Error("Session expired");
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`);
+    return data;
+  }
 
-          const li = document.createElement("li");
-          li.className =
-            "list-group-item d-flex justify-content-between align-items-center";
+  const button = (className, label, text, item) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `btn btn-sm ${className}`;
+    btn.dataset.id = item.id;
+    btn.dataset.qty = item.quantity;
+    btn.setAttribute("aria-label", label);
+    btn.textContent = text;
+    return btn;
+  };
 
-          li.innerHTML = `
-            <div>
-              ${item.menu?.item_name || "Unknown Item"}
-              <div class="btn-group ms-2">
-                <button class="btn btn-sm btn-outline-secondary decrease-qty"
-                  data-id="${item.id}" data-qty="${item.quantity}">➖</button>
-                <span class="px-2">${item.quantity}</span>
-                <button class="btn btn-sm btn-outline-secondary increase-qty"
-                  data-id="${item.id}" data-qty="${item.quantity}">➕</button>
-                <button class="btn btn-sm btn-outline-danger remove-item"
-                  data-id="${item.id}">❌</button>
-              </div>
-            </div>
-            <span class="fw-bold">₹${item.price * item.quantity}</span>
-          `;
+  // === Render cart from server data ===
+  function renderCart(cart) {
+    const items = cart?.items || [];
+    let totalItems = 0;
+    let totalPaise = 0;
 
-          cartList.appendChild(li);
-        });
+    cartList.replaceChildren();
+
+    items.forEach((item) => {
+      totalItems += item.quantity;
+      totalPaise += Math.round(item.price * 100) * item.quantity;
+
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex justify-content-between align-items-center gap-2";
+
+      const left = document.createElement("div");
+      const name = document.createElement("div");
+      name.textContent = item.menu?.item_name || "Unknown Item";
+      if (item.menu && !item.menu.available) {
+        name.textContent += " (unavailable)";
+        name.classList.add("text-danger");
       }
 
-      cartCount.textContent = totalItems;
-      cartTotal.textContent = `₹${totalPrice}`;
+      const controls = document.createElement("div");
+      controls.className = "btn-group btn-group-sm mt-1";
+      const qty = document.createElement("span");
+      qty.className = "px-2 align-self-center";
+      qty.textContent = item.quantity;
+      controls.append(
+        button("btn-outline-secondary decrease-qty", "Decrease quantity", "➖", item),
+        qty,
+        button("btn-outline-secondary increase-qty", "Increase quantity", "➕", item),
+        button("btn-outline-danger remove-item", "Remove item", "❌", item)
+      );
+      left.append(name, controls);
+
+      const price = document.createElement("span");
+      price.className = "fw-bold";
+      price.textContent = `₹${formatRupees(item.price * item.quantity)}`;
+
+      li.append(left, price);
+      cartList.appendChild(li);
+    });
+
+    cartCount.textContent = totalItems;
+    cartTotal.textContent = `₹${formatRupees(totalPaise / 100)}`;
+    cartEmpty.classList.toggle("d-none", items.length > 0);
+    checkoutButton.disabled = items.length === 0;
+  }
+
+  async function refreshCart() {
+    try {
+      renderCart(await api("/api/cart"));
     } catch (err) {
+      showError("Could not load your cart. Please refresh the page.");
       console.error("❌ [CLIENT] Error refreshing cart:", err);
     }
   }
 
-  // === Handle category filter ===
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const category = btn.dataset.category;
-      try {
-        const res = await fetch(`/menus/${category}`);
-        const items = await res.json();
-
-        itemsContainer.innerHTML = "";
-
-        items.forEach((item) => {
-          const card = document.createElement("div");
-          card.classList.add("col-md-6", "mb-3", "menu-item");
-          card.setAttribute("data-category", item.item_category);
-          card.innerHTML = `
-            <div class="card h-100 shadow-sm p-3 d-flex flex-column">
-              <h6>${item.item_name}</h6>
-              <p class="mb-1 text-muted">${item.item_description}</p>
-              <p class="fw-bold">₹${item.item_price}</p>
-              <button class="btn btn-sm btn-outline-danger mt-auto add-to-cart"
-                data-id="${item.id}"
-                data-price="${item.item_price}">
-                ➕ Add to Cart
-              </button>
-            </div>
-          `;
-          itemsContainer.appendChild(card);
-        });
-      } catch (err) {
-        console.error("❌ [CLIENT] Error fetching menus:", err);
-      }
-    });
-  });
-
-  // === Global handler for Cart Controls ===
-  document.addEventListener("click", async (e) => {
-    if (e.target.classList.contains("add-to-cart")) {
-      const id = e.target.dataset.id;
-      const price = e.target.dataset.price;
-      try {
-        await fetch("/api/cart/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ menu_item_id: id, price }),
-        });
-        refreshCart();
-      } catch (err) {
-        console.error("❌ [CLIENT] Error adding to cart:", err);
-      }
-    }
-
-    if (e.target.classList.contains("increase-qty")) {
-      const id = e.target.dataset.id;
-      const currentQty = parseInt(e.target.dataset.qty);
-      try {
-        await fetch(`/api/cart/update/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ quantity: currentQty + 1 }),
-        });
-        refreshCart();
-      } catch (err) {
-        console.error("❌ [CLIENT] Error increasing qty:", err);
-      }
-    }
-
-    if (e.target.classList.contains("decrease-qty")) {
-      const id = e.target.dataset.id;
-      const currentQty = parseInt(e.target.dataset.qty);
-      try {
-        await fetch(`/api/cart/update/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ quantity: currentQty - 1 }),
-        });
-        refreshCart();
-      } catch (err) {
-        console.error("❌ [CLIENT] Error decreasing qty:", err);
-      }
-    }
-
-    if (e.target.classList.contains("remove-item")) {
-      const id = e.target.dataset.id;
-      try {
-        await fetch(`/api/cart/remove/${id}`, { method: "DELETE" });
-        refreshCart();
-      } catch (err) {
-        console.error("❌ [CLIENT] Error removing item:", err);
-      }
-    }
-  });
-
-  // === Payment Handling ===
-  if (document.getElementById("razorpay-container")) {
-    const razorpayKey =
-      document.getElementById("razorpay-container").dataset.key;
-    const razorpayOrderId =
-      document.getElementById("razorpay-container").dataset.orderid;
-    const amount = document.getElementById("razorpay-container").dataset.amount;
-    const currency =
-      document.getElementById("razorpay-container").dataset.currency;
-
-    if (razorpayKey) {
-      const options = {
-        key: razorpayKey,
-        amount: amount,
-        currency: currency,
-        name: "Restaurant Kiosk",
-        description: "Order Payment",
-        order_id: razorpayOrderId,
-        handler: function (response) {
-          fetch("/api/payments/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
-          })
-            .then((res) => res.json())
-            .then(() => {
-              window.location.href = "/";
-            })
-            .catch(() => {
-              alert("❌ Payment verification failed.");
-            });
-        },
-        theme: { color: "#dc3545" },
-      };
-      const rzp = new Razorpay(options);
-      rzp.open();
+  // Run a cart change, then re-render; buttons are disabled meanwhile to avoid double clicks
+  async function cartAction(target, request) {
+    target.disabled = true;
+    showError("");
+    try {
+      await request();
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      target.disabled = false;
+      refreshCart();
     }
   }
 
-  // === Live Order Status Updates ===
-  try {
-    const socket = io();
-    socket.emit("joinRoom", { role: "kiosk" });
-
-    socket.on("orderStatusUpdated", ({ orderId, status }) => {
-      console.log(`📡 [CLIENT] Kiosk got update: Order #${orderId} → ${status}`);
-
-      const tracker = document.querySelector(`#tracker-${orderId}`);
-      if (!tracker) {
-        console.warn(`⚠️ [CLIENT] Tracker not found for order #${orderId}`);
-        return;
-      }
-
-      const steps = [
-        "pending",
-        "accepted",
-        "preparing",
-        "ready",
-        "served",
-        "cancelled",
-      ];
-      const lis = tracker.querySelectorAll("li");
-
-      lis.forEach((li) => {
-        li.classList.remove("completed", "cancelled");
-        const step = li.getAttribute("data-step");
-
-        if (status === "cancelled" && step === "cancelled") {
-          li.classList.add("cancelled");
-        } else if (
-          status !== "cancelled" &&
-          steps.indexOf(step) <= steps.indexOf(status)
-        ) {
-          li.classList.add("completed");
-        }
+  // === Category filter (client-side; all items are already on the page) ===
+  categoryButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const category = btn.dataset.category;
+      categoryButtons.forEach((b) => b.classList.toggle("active", b === btn));
+      itemsContainer.querySelectorAll(".menu-item").forEach((card) => {
+        card.classList.toggle("d-none", Boolean(category) && card.dataset.category !== category);
       });
     });
-  } catch (err) {
-    console.error("❌ [CLIENT] Socket.io not connected:", err);
-  }
+  });
+
+  // === Cart controls ===
+  document.addEventListener("click", (e) => {
+    const target = e.target.closest("button");
+    if (!target) return;
+    const id = target.dataset.id;
+    const qty = Number(target.dataset.qty);
+
+    if (target.classList.contains("add-to-cart")) {
+      cartAction(target, () =>
+        api("/api/cart/add", { method: "POST", body: JSON.stringify({ menu_item_id: id }) })
+      );
+    } else if (target.classList.contains("increase-qty")) {
+      cartAction(target, () =>
+        api(`/api/cart/update/${id}`, { method: "PATCH", body: JSON.stringify({ quantity: qty + 1 }) })
+      );
+    } else if (target.classList.contains("decrease-qty")) {
+      cartAction(target, () =>
+        api(`/api/cart/update/${id}`, { method: "PATCH", body: JSON.stringify({ quantity: qty - 1 }) })
+      );
+    } else if (target.classList.contains("remove-item")) {
+      cartAction(target, () => api(`/api/cart/remove/${id}`, { method: "DELETE" }));
+    }
+  });
+
+  // Prevent double submission of the checkout form
+  checkoutForm.addEventListener("submit", () => {
+    checkoutButton.disabled = true;
+  });
 
   refreshCart();
-});
+})();

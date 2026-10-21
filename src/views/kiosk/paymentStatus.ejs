@@ -1,22 +1,33 @@
-<div class="status-box text-center p-4 rounded shadow-sm 
-  <%= status.includes('success') ? 'alert alert-success' 
-  : status.includes('pending') ? 'alert alert-warning' 
-  : 'alert alert-danger' %>">
-  
-  <% if (status.includes("success")) { %>
-    <h2>✅ Payment Successful</h2>
-    <p>Thank you! Your payment for Order <strong>#<%= order.id %></strong> was successful.</p>
-    <p><strong>Total Paid:</strong> ₹<%= order.total_amount %></p>
-    <p>Your order is now being processed. 🍴</p>
-  <% } else if (status.includes("pending")) { %>
-    <h2>⏳ Payment Pending</h2>
-    <p>Your payment for Order <strong>#<%= order.id %></strong> is still processing.</p>
-    <p>Please wait a moment, or refresh this page later.</p>
-  <% } else { %>
-    <h2>❌ Payment Failed</h2>
-    <p>Unfortunately, your payment for Order <strong>#<%= order.id %></strong> failed.</p>
-    <p>Please try again, or contact support if the issue persists.</p>
-  <% } %>
+<%
+  const variant = status === "success" ? "success" : status === "pending" ? "warning" : "danger";
+%>
+<div class="container py-5 d-flex justify-content-center">
+  <div class="status-box border-top border-5 border-<%= variant %>">
+    <% if (status === "success") { %>
+      <h2>✅ Payment Successful</h2>
+      <% if (locals.simulated) { %>
+        <p class="badge text-bg-info">Test mode: payment simulated</p>
+      <% } %>
+      <% if (order.order_code) { %>
+        <p class="mb-1 text-muted">Your token number</p>
+        <p class="display-4 fw-bold text-danger mb-3">#<%= order.order_code %></p>
+      <% } %>
+      <p>Thank you! Your payment for Order <strong>#<%= order.id %></strong> was successful.</p>
+      <p><strong>Total Paid:</strong> ₹<%= formatRupees(order.total_amount) %></p>
+      <p>Your order has been sent to the kitchen. 🍴</p>
+    <% } else if (status === "pending") { %>
+      <h2>⏳ Payment Pending</h2>
+      <p>Your payment for Order <strong>#<%= order.id %></strong> is still processing.</p>
+      <p>Please wait a moment, or refresh this page later.</p>
+    <% } else { %>
+      <h2>❌ Payment Failed</h2>
+      <p>Unfortunately, the payment for Order <strong>#<%= order.id %></strong> could not be completed.</p>
+      <p>Your cart has been kept, so you can try again.</p>
+    <% } %>
 
-  <a href="/kiosk" class="btn btn-outline-dark mt-3">⬅ Back to Menu</a>
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+      <a href="/kiosk" class="btn btn-outline-dark">⬅ Back to Menu</a>
+      <a href="/api/auth/profile" class="btn btn-outline-secondary">My Orders</a>
+    </div>
+  </div>
 </div>

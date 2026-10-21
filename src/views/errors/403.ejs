@@ -1,0 +1,6 @@
+<%- include("./error", {
+  code: 403,
+  message: locals.message || "Access Denied. You don’t have permission to view this page.",
+  url: locals.url || null,
+  stack: null
+}) %>

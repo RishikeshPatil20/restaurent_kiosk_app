@@ -1,24 +1,30 @@
-<div class="container text-center py-5">
-    <h2 class="mb-4">💳 Processing Payment</h2>
-    <p class="lead">Please wait while we redirect you to the payment gateway...</p>
+<div class="container py-5 d-flex justify-content-center">
+  <div class="payment-box">
+    <h2 class="mb-3">💳 Complete Payment</h2>
+    <p>Order <strong>#<%= order.id %></strong></p>
+    <p class="fs-5"><strong>Total:</strong> ₹<%= formatRupees(order.total_amount) %></p>
 
-    <% if (razorpayKey) { %>
-      <!-- ✅ Real Razorpay -->
-      <div id="razorpay-container"
-           data-key="<%= razorpayKey %>"
-           data-orderid="<%= razorpayOrderId %>"
-           data-amount="<%= amount %>"
-           data-currency="<%= currency %>"></div>
-    <% } else { %>
-      <!-- ⚠️ Dummy Simulation -->
-      <div class="alert alert-info mt-4">
-        Razorpay keys not configured. Running <b>Dummy Payment Simulation</b>.
-      </div>
-      <form action="/api/payments/verify" method="POST" class="mt-4">
-        <input type="hidden" name="razorpay_order_id" value="DUMMY-<%= order.id %>">
-        <input type="hidden" name="razorpay_payment_id" value="SIMULATED-PAYMENT">
-        <input type="hidden" name="razorpay_signature" value="SIMULATED-SIGNATURE">
-        <button type="submit" class="btn btn-success">✅ Simulate Success</button>
-      </form>
-    <% } %>
+    <div id="payment-loading">
+      <div class="loader"></div>
+      <p class="text-muted">Opening the secure payment window…</p>
+    </div>
+
+    <div id="payment-message" class="alert alert-warning d-none" role="alert"></div>
+
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+      <button type="button" id="pay-button" class="btn btn-danger d-none">Pay Now</button>
+      <a href="/kiosk" class="btn btn-outline-dark">⬅ Back to Menu</a>
+    </div>
+
+    <!-- ✅ Real Razorpay -->
+    <div id="razorpay-container"
+         data-key="<%= razorpayKey %>"
+         data-orderid="<%= razorpayOrderId %>"
+         data-amount="<%= amount %>"
+         data-currency="<%= currency %>"
+         data-email="<%= email %>"></div>
   </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/js/payment.js"></script>

@@ -1,5 +1,6 @@
 // backend/src/models/order.js
 import { DataTypes } from "sequelize";
+import { rupeesColumn } from "./money.js";
 
 export default (sequelize) => {
   const Order = sequelize.define(
@@ -27,6 +28,8 @@ export default (sequelize) => {
       notes: {
         type: DataTypes.TEXT,
       },
+      // Daily token number shown to customers and the kitchen (#1, #2, ... per business day).
+      // Assigned when the order is paid; see services/orders.js → markOrderPaid.
       order_code: {
         type: DataTypes.INTEGER,
       },
@@ -41,10 +44,7 @@ export default (sequelize) => {
         ),
         defaultValue: "pending",
       },
-      total_amount: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
+      total_amount: rupeesColumn("total_amount", "total_amount_paise"),
       // ✅ NEW FIELD
       payment_status: {
         type: DataTypes.ENUM("unpaid", "paid", "failed"),
