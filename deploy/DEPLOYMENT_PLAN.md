@@ -2,6 +2,12 @@
 
 Last updated: 2026-10-22 · Target: ~60 minutes end to end · Cost: ₹0 / $0
 
+> **Status: DEPLOYED ✅** at https://dinegrid.duckdns.org (VM `payflow`, 130.210.59.24, Ubuntu 24.04 ARM).
+> The existing PayFlow site (https://payflow-demo.duckdns.org) was verified unaffected.
+> Differences from the plan below: the Nginx file is `/etc/nginx/conf.d/restaurant-kiosk.conf`, because PayFlow uses `conf.d`.
+> The permanent SSH key is in `~/.ssh/authorized_keys2`. The reproducible scripts are `deploy/inspect.sh` and `deploy/setup.sh`.
+> See `COMMANDS_LOG.md` for every command and the verification results.
+
 ## 1. Verdict: can both websites share the VM?
 
 **Yes, comfortably.**
