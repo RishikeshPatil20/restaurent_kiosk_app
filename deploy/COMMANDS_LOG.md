@@ -138,3 +138,17 @@ sudo -u kiosk /opt/restaurant-kiosk-app/deploy/update.sh && sudo systemctl resta
 journalctl -u restaurant-kiosk -f                                                                     # logs
 sudo nano /opt/restaurant-kiosk-app/.env && sudo systemctl restart restaurant-kiosk                   # add Razorpay keys
 ```
+
+## G. Fix: "Payment Failed" at checkout (2026-10-22)
+
+Cause: with `NODE_ENV=production`, the app turns off simulated payments (`dummyAllowed` in
+`src/controllers/razorpayController.js`). With empty Razorpay keys, checkout renders "Payment Failed".
+Fix: add Razorpay Test Mode keys. The helper asks for them in the user's own terminal, so secrets never go through chat.
+
+```bash
+scp -i ~/.ssh/oci_vm_ed25519 deploy/set-razorpay-keys.sh ubuntu@130.210.59.24:/tmp/
+ssh -i ~/.ssh/oci_vm_ed25519 ubuntu@130.210.59.24 'sudo install -m 750 /tmp/set-razorpay-keys.sh /usr/local/bin/kiosk-set-razorpay'
+
+# Run by the user (prompts for keys, validates them against the Razorpay API, saves them to .env, restarts the app):
+ssh -t -i ~/.ssh/oci_vm_ed25519 ubuntu@130.210.59.24 sudo kiosk-set-razorpay
+```

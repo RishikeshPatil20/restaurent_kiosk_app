@@ -58,7 +58,7 @@ Browser ──HTTPS──► Nginx :443 (existing)
 | Domain | DuckDNS subdomain (free) |
 | HTTPS | Let's Encrypt via certbot (free, auto-renews) |
 | Database | Self-hosted PostgreSQL on the same VM (no paid managed DB) |
-| Payments | Razorpay **Test Mode** (free; with empty keys the app uses simulated payments) |
+| Payments | Razorpay **Test Mode** keys (free). **Required:** with empty keys in production, checkout shows "Payment Failed" (simulated payments only work in development). |
 | Outbound traffic | 10 TB/month free; a demo uses almost none |
 
 ## 4. Step-by-step plan with time budget
@@ -108,8 +108,8 @@ The **first commit on public GitHub contains a `.env` file**. The new commit sto
 - `SECRET_KEY` / DB password: the server gets **new** random values automatically.
 - Optional full clean-up: rewrite history with `git filter-repo --path .env --invert-paths` and force-push. This isn't needed if you rotate the keys.
 
-### M5. After go-live (optional)
-- Razorpay test keys: send them so they go into the server `.env`. If you skip this, payments are simulated.
+### M5. After go-live (Razorpay keys are required)
+- **Required for checkout:** Razorpay test keys (`rzp_test_...`) in the server `.env`. Without them checkout shows "Payment Failed", because simulated payments are disabled when NODE_ENV=production.
 - Razorpay webhook: Dashboard → Webhooks → URL `https://<kiosk domain>/api/payments/webhook`, and send the webhook secret.
 - Change the seeded demo passwords (`admin@example.com` / `staff@example.com` / `kiosk@example.com`, all `password123`).
 
@@ -127,7 +127,7 @@ DB_PORT=5432
 DATABASE_NAME=restaurent_kiosk
 USER_NAME=kiosk_app
 PASSWORD=<random, generated on server>
-RAZORPAY_KEY_ID=            # empty = simulated payments
+RAZORPAY_KEY_ID=            # REQUIRED in production (rzp_test_... for demo)
 RAZORPAY_KEY_SECRET=
 RAZORPAY_WEBHOOK_SECRET=
 ```
