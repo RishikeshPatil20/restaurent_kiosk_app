@@ -7,6 +7,7 @@ body {
   min-height: 100vh;
   margin: 0;
   background-color: #f8f9fa;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 .page-content {
@@ -71,13 +72,20 @@ body {
 
 @media (max-width: 575.98px) {
   .main-header {
-    padding: 10px 16px;
+    padding: 10px 12px;
+  }
+  .brand-logo {
+    height: 34px;
   }
   .brand-name {
-    font-size: 1.15rem;
+    font-size: 1rem;
   }
   .header-actions {
-    gap: 10px;
+    gap: 8px;
+  }
+  .profile-image {
+    height: 34px;
+    width: 34px;
   }
 }
 
@@ -93,6 +101,20 @@ footer {
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem 1.25rem;
+}
+
+.footer-link {
+  color: #bbb;
+  font-size: 0.85rem;
+}
+
+.footer-link:hover {
+  color: #fff;
 }
 
 /* ===== Login / Register Pages ===== */
@@ -226,112 +248,621 @@ footer {
 }
 
 /* ================== KIOSK MENU PAGE CSS ================== */
-.category-sidebar {
-  background: #fff;
-  border-right: 1px solid #eee;
-  padding: 20px;
+.kiosk-page {
+  --kiosk-brand: #dc3545;
+  --kiosk-brand-dark: #b02a37;
+  --kiosk-ink: #1f2430;
+  --kiosk-muted: #6b7280;
+  --kiosk-line: #ece6e1;
+  --kiosk-bg: #faf7f4;
+  --kiosk-radius: 16px;
+  background: var(--kiosk-bg);
+  color: var(--kiosk-ink);
+  padding-bottom: 3rem;
 }
 
-.category-list li {
-  margin-bottom: 6px;
+/* Hero */
+.kiosk-hero {
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255, 193, 7, 0.18), transparent 45%),
+    linear-gradient(135deg, #fff1ec 0%, #ffe3dc 100%);
+  padding: 2.5rem 0 2rem;
+  border-bottom: 1px solid var(--kiosk-line);
 }
 
-.category-btn {
-  text-align: left;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-weight: 500;
-  background: #f8f9fa;
-  color: #333;
-  border: 1px solid #ddd;
-  transition: all 0.3s ease-in-out;
-}
-
-.category-btn:hover,
-.category-btn.active {
-  background-color: #dc3545;
-  color: #fff;
-  border-color: #dc3545;
-}
-
-.menu-item .card {
-  background: #fff;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: all 0.3s ease-in-out;
-}
-
-.menu-item .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 6px 16px rgba(0,0,0,0.12);
-}
-
-.cart {
-  background: #fff;
-  border-left: 1px solid #eee;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.05);
-  align-self: flex-start;
-  position: sticky;
-  top: 12px;
-}
-
-.cart h4 {
-  font-size: 1.2rem;
+.kiosk-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #333;
+  color: var(--kiosk-brand);
+  margin-bottom: 0.5rem;
 }
 
-.cart-badge {
-  background-color: #fff;
-  color: #dc3545;
-  font-weight: bold;
-  border-radius: 50%;
-  padding: 2px 9px;
+.kiosk-title {
+  font-size: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.kiosk-subtitle {
+  color: var(--kiosk-muted);
+  max-width: 40rem;
+  margin-bottom: 1.25rem;
+}
+
+.kiosk-search {
+  position: relative;
+  max-width: 32rem;
+}
+
+.kiosk-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.kiosk-search .form-control {
+  padding: 0.8rem 1rem 0.8rem 2.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--kiosk-line);
+  box-shadow: 0 6px 18px rgba(220, 53, 69, 0.08);
+}
+
+.kiosk-search .form-control:focus {
+  border-color: var(--kiosk-brand);
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+}
+
+/* Sticky category bar */
+.kiosk-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  background: rgba(250, 247, 244, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--kiosk-line);
+  padding: 0.75rem 0;
+}
+
+.category-chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 2px;
+}
+
+.category-chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* Wide screens have room for every chip, so wrap instead of hiding some off-screen */
+@media (min-width: 992px) {
+  .category-chips {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+}
+
+.category-chip {
+  flex: 0 0 auto;
+  border: 1px solid var(--kiosk-line);
+  background: #fff;
+  color: var(--kiosk-ink);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
   font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
-@media (max-width: 767.98px) {
-  /* Categories become a horizontal, scrollable chip row */
-  .category-sidebar {
-    border-right: none;
-    border-bottom: 1px solid #eee;
-    padding: 12px 16px;
-  }
-  .category-sidebar h5 {
-    display: none;
-  }
-  .category-list {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    margin: 0;
-    padding-bottom: 4px;
-  }
-  .category-list li {
-    flex: 0 0 auto;
-    margin: 0;
-  }
-  .category-btn {
-    white-space: nowrap;
-    width: auto !important;
-  }
+.category-chip:hover {
+  border-color: var(--kiosk-brand);
+  color: var(--kiosk-brand);
+}
 
-  /* Keep the cart and checkout reachable while scrolling the menu */
-  .cart {
+.category-chip.active {
+  background: var(--kiosk-brand);
+  border-color: var(--kiosk-brand);
+  color: #fff;
+}
+
+.category-chip:focus-visible,
+.btn-add:focus-visible,
+.qty-btn:focus-visible,
+.cart-fab:focus-visible {
+  outline: 3px solid rgba(220, 53, 69, 0.35);
+  outline-offset: 2px;
+}
+
+.veg-switch {
+  flex: 0 0 auto;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.veg-switch .form-check-input:checked {
+  background-color: #1e9e4a;
+  border-color: #1e9e4a;
+}
+
+/* Veg / non-veg marks (Indian food labelling convention) */
+.veg-mark {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  border: 2px solid;
+  border-radius: 3px;
+  position: relative;
+  margin-top: 0.2rem;
+  vertical-align: -2px;
+}
+
+.veg-mark::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.veg-mark.veg {
+  color: #1e9e4a;
+}
+
+.veg-mark.nonveg {
+  color: #a8461b;
+}
+
+.veg-mark.nonveg::after {
+  inset: 2px;
+  border-radius: 0;
+  clip-path: polygon(50% 8%, 92% 88%, 8% 88%);
+}
+
+/* Menu sections */
+.kiosk-body {
+  padding-top: 1.5rem;
+}
+
+#menu-sections,
+.menu-section {
+  /* clear the sticky category bar (height measured by script.js) */
+  scroll-margin-top: calc(var(--kiosk-toolbar-h, 64px) + 12px);
+}
+
+.menu-section {
+  margin-bottom: 2rem;
+}
+
+.menu-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.menu-section-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--kiosk-muted);
+  background: #fff;
+  border: 1px solid var(--kiosk-line);
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+}
+
+/* Dish cards */
+.dish-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--kiosk-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(31, 36, 48, 0.06), 0 8px 24px rgba(31, 36, 48, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dish-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 4px rgba(31, 36, 48, 0.06), 0 14px 32px rgba(31, 36, 48, 0.12);
+}
+
+.dish-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f3ede8;
+}
+
+.dish-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.dish-card:hover .dish-media img {
+  transform: scale(1.04);
+}
+
+.dish-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
+  background: linear-gradient(135deg, #fff1ec, #ffe3dc);
+}
+
+.dish-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1rem 1rem 1.1rem;
+}
+
+.dish-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dish-desc {
+  color: var(--kiosk-muted);
+  font-size: 0.875rem;
+  margin: 0.4rem 0 0.9rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dish-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 40px;
+}
+
+.dish-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Add button + quantity stepper */
+.btn-add {
+  border: 1.5px solid var(--kiosk-brand);
+  color: var(--kiosk-brand);
+  background: #fff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.4rem 1.1rem;
+}
+
+.btn-add:hover,
+.btn-add:active {
+  background: var(--kiosk-brand);
+  color: #fff;
+  border-color: var(--kiosk-brand);
+}
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--kiosk-brand);
+  color: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qty-btn:hover {
+  background: var(--kiosk-brand-dark);
+}
+
+.qty-btn:disabled {
+  opacity: 0.6;
+}
+
+.qty-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.menu-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #fff;
+  border-radius: var(--kiosk-radius);
+  border: 1px dashed var(--kiosk-line);
+}
+
+/* Cart */
+.cart-card {
+  width: 100%;
+}
+
+.cart-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.cart-lines {
+  margin: 0;
+}
+
+.cart-line {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--kiosk-line);
+}
+
+.cart-line:first-child {
+  padding-top: 0;
+}
+
+.cart-thumb {
+  width: 56px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.cart-thumb-placeholder {
+  display: grid;
+  place-items: center;
+  background: #f3ede8;
+}
+
+.cart-line-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cart-line-name {
+  font-weight: 600;
+  font-size: 0.925rem;
+  line-height: 1.25;
+}
+
+.cart-line-each {
+  color: var(--kiosk-muted);
+  font-size: 0.8rem;
+  margin: 0.15rem 0 0.4rem;
+}
+
+.cart-line .qty-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+}
+
+.cart-line-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.cart-line-total {
+  font-weight: 700;
+}
+
+.cart-remove {
+  border: 0;
+  background: none;
+  color: var(--kiosk-muted);
+  font-size: 0.8rem;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.cart-remove:hover {
+  color: var(--kiosk-brand);
+}
+
+.cart-summary {
+  padding-top: 1rem;
+}
+
+.cart-total-row {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+.btn-checkout {
+  background: var(--kiosk-brand);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+}
+
+.btn-checkout:hover,
+.btn-checkout:focus-visible {
+  background: var(--kiosk-brand-dark);
+  color: #fff;
+}
+
+.btn-checkout:disabled {
+  background: #e9a5ad;
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Large screens: cart is a sticky card beside the menu */
+@media (min-width: 992px) {
+  .cart-panel {
     position: sticky;
-    top: auto;
-    bottom: 0;
-    z-index: 10;
-    max-height: 45vh;
+    top: calc(var(--kiosk-toolbar-h, 64px) + 16px);
+  }
+  .cart-card {
+    background: #fff;
+    border-radius: var(--kiosk-radius);
+    padding: 1.25rem;
+    box-shadow: 0 1px 2px rgba(31, 36, 48, 0.06), 0 8px 24px rgba(31, 36, 48, 0.08);
+  }
+  .cart-lines {
+    max-height: calc(100vh - 380px);
     overflow-y: auto;
-    border-left: none;
-    border-top: 2px solid #dc3545;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.12);
-    padding: 12px 16px;
+  }
+}
+
+/* Phones/tablets: cart is a bottom sheet opened from a floating bar */
+@media (max-width: 991.98px) {
+  .kiosk-page {
+    padding-bottom: 6rem; /* room for the floating cart bar */
+  }
+  #cartPanel {
+    /* Bottom sheet grows with the order, up to 85% of the screen */
+    --bs-offcanvas-height: auto;
+    max-height: 85vh;
+    border-radius: 20px 20px 0 0;
+  }
+  #cartPanel .offcanvas-body {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Small phones: compact list cards (photo left, details right) so the menu isn't one long scroll */
+@media (max-width: 575.98px) {
+  .dish-card {
+    flex-direction: row;
+  }
+  .dish-card:hover {
+    transform: none;
+  }
+  .dish-media {
+    flex: 0 0 120px;
+    aspect-ratio: auto;
+    min-height: 132px;
+  }
+  .dish-placeholder {
+    font-size: 2.25rem;
+  }
+  .dish-body {
+    padding: 0.75rem 0.85rem;
+    min-width: 0;
+  }
+  .dish-name {
+    font-size: 0.975rem;
+  }
+  .dish-desc {
+    font-size: 0.8rem;
+    margin: 0.25rem 0 0.5rem;
+  }
+  .dish-price {
+    font-size: 1rem;
+  }
+  .btn-add {
+    padding: 0.3rem 0.85rem;
+    font-size: 0.875rem;
+  }
+  .dish-footer .qty-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.cart-fab {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 1030;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border: 0;
+  border-radius: 14px;
+  padding: 0.9rem 1.25rem;
+  background: var(--kiosk-brand);
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(220, 53, 69, 0.35);
+}
+
+.cart-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 5.5rem;
+  transform: translate(-50%, 1rem);
+  z-index: 1060;
+  background: var(--kiosk-ink);
+  color: #fff;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.cart-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (min-width: 992px) {
+  .cart-toast {
+    bottom: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .kiosk-hero {
+    padding: 1.75rem 0 1.5rem;
+  }
+  .veg-switch .form-check-label {
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dish-card,
+  .dish-media img,
+  .cart-toast {
+    transition: none;
+  }
+  .dish-card:hover,
+  .dish-card:hover .dish-media img {
+    transform: none;
   }
 }
 

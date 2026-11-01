@@ -1,0 +1,39 @@
+<div class="container py-5" style="max-width: 960px;">
+  <h1 class="h3 mb-2">Photo Credits</h1>
+  <p class="text-muted">
+    Menu photos come from <a href="https://commons.wikimedia.org" rel="noopener">Wikimedia Commons</a>
+    and are used under the licenses below. They have been cropped and resized.
+  </p>
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Dish</th>
+          <th scope="col">Photo</th>
+          <th scope="col">Author</th>
+          <th scope="col">License</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% credits.forEach(c => { %>
+          <tr>
+            <td class="d-flex align-items-center gap-2">
+              <img src="<%= c.image %>" alt="" width="56" height="42" class="rounded object-fit-cover" loading="lazy">
+              <%= c.item %>
+            </td>
+            <td><a href="<%= c.source %>" rel="noopener"><%= c.title %></a></td>
+            <td><%= c.author %></td>
+            <td>
+              <% if (c.licenseUrl) { %>
+                <a href="<%= c.licenseUrl %>" rel="noopener"><%= c.license %></a>
+              <% } else { %>
+                <%= c.license %>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>

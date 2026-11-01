@@ -7,6 +7,7 @@ import { authenticateJWT } from "../middleware/jwtAuthMiddleware.js";
 import { authorizeRole } from "../middleware/roleMiddleware.js";
 import { Order, OrderItem } from "../models/index.js";
 import { homeFor, parseId } from "../utils/request.js";
+import { menuImageCredits } from "../utils/menuImages.js";
 
 const viewsRoutes = express.Router();
 
@@ -66,6 +67,11 @@ viewsRoutes.get("/staff", authenticateJWT, authorizeRole(["staff", "admin"]), as
 
 // Admin dashboard (admin only)
 viewsRoutes.get("/admin", authenticateJWT, authorizeRole(["admin"]), renderDashboard);
+
+// Attribution for the menu photos (Wikimedia Commons, CC licenses)
+viewsRoutes.get("/credits", (req, res) => {
+  return res.render("credits", { title: "Photo Credits", credits: menuImageCredits });
+});
 
 // Default root: role home page, or login
 viewsRoutes.get("/", (req, res) => {

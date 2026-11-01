@@ -1,26 +1,51 @@
 // public/js/script.js
 // Kiosk menu page only (loaded by views/kiosk/index.ejs)
 (() => {
-  const itemsContainer = document.getElementById("items-container");
-  if (!itemsContainer) return;
+  const menuRoot = document.getElementById("menu-sections");
+  if (!menuRoot) return;
 
-  const categoryButtons = document.querySelectorAll(".category-btn");
+  const searchInput = document.getElementById("menu-search");
+  const categoryChips = document.querySelectorAll(".category-chip");
+  const vegOnly = document.getElementById("veg-only");
+  const menuEmpty = document.getElementById("menu-empty");
   const cartList = document.getElementById("cart-items");
   const cartEmpty = document.getElementById("cart-empty");
+  const cartSummary = document.getElementById("cart-summary");
   const cartCount = document.getElementById("cart-count");
   const cartTotal = document.getElementById("cart-total");
   const cartError = document.getElementById("cart-error");
   const checkoutForm = document.getElementById("checkout-form");
   const checkoutButton = document.getElementById("checkout-button");
+  const cartFab = document.getElementById("cart-fab");
+  const fabCount = document.getElementById("cart-fab-count");
+  const fabTotal = document.getElementById("cart-fab-total");
+  const toast = document.getElementById("cart-toast");
+
+  let activeCategory = "";
+  let toastTimer;
 
   const formatRupees = (rupees) => {
     const paise = Math.round(Number(rupees) * 100);
     return paise % 100 === 0 ? String(paise / 100) : (paise / 100).toFixed(2);
   };
 
+  const el = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+
   const showError = (message) => {
     cartError.textContent = message;
     cartError.classList.toggle("d-none", !message);
+  };
+
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
   };
 
   // JSON fetch that sends the user back to login when the session has expired
@@ -38,65 +63,160 @@
     return data;
   }
 
-  const button = (className, label, text, item) => {
-    const btn = document.createElement("button");
+  // The cart and section anchors sit just below the sticky category bar, whatever its height
+  const toolbar = document.getElementById("kiosk-toolbar");
+  new ResizeObserver(() => {
+    document.documentElement.style.setProperty("--kiosk-toolbar-h", `${toolbar.offsetHeight}px`);
+  }).observe(toolbar);
+
+  // ---------------- Menu filters (search + category + veg) ----------------
+  // Every search term must match the start of a word, so "lassi" doesn't match "classic"
+  const matchesSearch = (text, terms) => {
+    const words = text.split(/[^a-z0-9]+/);
+    return terms.every((term) => words.some((word) => word.startsWith(term)));
+  };
+
+  function applyFilters() {
+    const terms = searchInput.value.trim().toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    let visible = 0;
+
+    menuRoot.querySelectorAll(".menu-section").forEach((section) => {
+      const inCategory = !activeCategory || section.dataset.category === activeCategory;
+      let sectionVisible = 0;
+      section.querySelectorAll(".menu-item").forEach((card) => {
+        const show =
+          inCategory &&
+          (!terms.length || matchesSearch(card.dataset.search, terms)) &&
+          (!vegOnly.checked || card.dataset.veg === "true");
+        card.classList.toggle("d-none", !show);
+        if (show) sectionVisible++;
+      });
+      section.classList.toggle("d-none", sectionVisible === 0);
+      section.querySelector(".menu-section-count").textContent = sectionVisible;
+      visible += sectionVisible;
+    });
+
+    menuEmpty.classList.toggle("d-none", visible > 0);
+  }
+
+  categoryChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      activeCategory = chip.dataset.category;
+      categoryChips.forEach((c) => {
+        c.classList.toggle("active", c === chip);
+        c.setAttribute("aria-pressed", String(c === chip));
+      });
+      applyFilters();
+      // Bring the menu into view if the user has scrolled past it
+      if (menuRoot.getBoundingClientRect().top < 0) {
+        menuRoot.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  });
+  searchInput.addEventListener("input", applyFilters);
+  vegOnly.addEventListener("change", applyFilters);
+
+  // ---------------- Cart rendering ----------------
+  const qtyButton = (className, label, text, item) => {
+    const btn = el("button", `qty-btn ${className}`, text);
     btn.type = "button";
-    btn.className = `btn btn-sm ${className}`;
     btn.dataset.id = item.id;
     btn.dataset.qty = item.quantity;
     btn.setAttribute("aria-label", label);
-    btn.textContent = text;
     return btn;
   };
 
-  // === Render cart from server data ===
+  const stepper = (item, name) => {
+    const wrap = el("div", "qty-stepper");
+    wrap.append(
+      qtyButton("decrease-qty", `Remove one ${name}`, "−", item),
+      el("span", "qty-value", String(item.quantity)),
+      qtyButton("increase-qty", `Add one more ${name}`, "+", item)
+    );
+    return wrap;
+  };
+
+  const addButton = (menuId, name) => {
+    const btn = el("button", "btn btn-add add-to-cart");
+    btn.type = "button";
+    btn.dataset.id = menuId;
+    btn.dataset.name = name;
+    btn.setAttribute("aria-label", `Add ${name} to order`);
+    const plus = el("span", "", "+");
+    plus.setAttribute("aria-hidden", "true");
+    btn.append("Add ", plus);
+    return btn;
+  };
+
+  // Menu cards show "Add" or a quantity stepper depending on what is in the cart
+  function renderDishActions(cartByMenuId) {
+    menuRoot.querySelectorAll(".dish-action").forEach((slot) => {
+      const item = cartByMenuId.get(Number(slot.dataset.menuId));
+      const name = slot.dataset.name;
+      slot.replaceChildren(item ? stepper(item, name) : addButton(slot.dataset.menuId, name));
+    });
+  }
+
+  function cartLine(item) {
+    const name = item.menu?.item_name || "Unknown item";
+    const li = el("li", "cart-line");
+
+    if (item.menu?.image_url) {
+      const img = el("img", "cart-thumb");
+      img.src = item.menu.image_url;
+      img.alt = "";
+      img.width = 56;
+      img.height = 42;
+      li.append(img);
+    } else {
+      li.append(el("div", "cart-thumb cart-thumb-placeholder", "🍽️"));
+    }
+
+    const info = el("div", "cart-line-info");
+    const title = el("div", "cart-line-name", name);
+    if (item.menu && !item.menu.available) {
+      title.append(el("span", "text-danger small ms-1", "(unavailable)"));
+    }
+    info.append(title, el("div", "cart-line-each", `₹${formatRupees(item.price)} each`), stepper(item, name));
+
+    const side = el("div", "cart-line-side");
+    side.append(el("div", "cart-line-total", `₹${formatRupees(item.price * item.quantity)}`));
+    const remove = el("button", "cart-remove remove-item", "Remove");
+    remove.type = "button";
+    remove.dataset.id = item.id;
+    remove.setAttribute("aria-label", `Remove ${name} from order`);
+    side.append(remove);
+
+    li.append(info, side);
+    return li;
+  }
+
   function renderCart(cart) {
     const items = cart?.items || [];
     let totalItems = 0;
     let totalPaise = 0;
 
-    cartList.replaceChildren();
+    cartList.replaceChildren(
+      ...items.map((item) => {
+        totalItems += item.quantity;
+        totalPaise += Math.round(item.price * 100) * item.quantity;
+        return cartLine(item);
+      })
+    );
 
-    items.forEach((item) => {
-      totalItems += item.quantity;
-      totalPaise += Math.round(item.price * 100) * item.quantity;
-
-      const li = document.createElement("li");
-      li.className = "list-group-item d-flex justify-content-between align-items-center gap-2";
-
-      const left = document.createElement("div");
-      const name = document.createElement("div");
-      name.textContent = item.menu?.item_name || "Unknown Item";
-      if (item.menu && !item.menu.available) {
-        name.textContent += " (unavailable)";
-        name.classList.add("text-danger");
-      }
-
-      const controls = document.createElement("div");
-      controls.className = "btn-group btn-group-sm mt-1";
-      const qty = document.createElement("span");
-      qty.className = "px-2 align-self-center";
-      qty.textContent = item.quantity;
-      controls.append(
-        button("btn-outline-secondary decrease-qty", "Decrease quantity", "➖", item),
-        qty,
-        button("btn-outline-secondary increase-qty", "Increase quantity", "➕", item),
-        button("btn-outline-danger remove-item", "Remove item", "❌", item)
-      );
-      left.append(name, controls);
-
-      const price = document.createElement("span");
-      price.className = "fw-bold";
-      price.textContent = `₹${formatRupees(item.price * item.quantity)}`;
-
-      li.append(left, price);
-      cartList.appendChild(li);
-    });
-
+    const total = `₹${formatRupees(totalPaise / 100)}`;
+    const hasItems = items.length > 0;
     cartCount.textContent = totalItems;
-    cartTotal.textContent = `₹${formatRupees(totalPaise / 100)}`;
-    cartEmpty.classList.toggle("d-none", items.length > 0);
-    checkoutButton.disabled = items.length === 0;
+    cartTotal.textContent = total;
+    cartEmpty.classList.toggle("d-none", hasItems);
+    cartSummary.classList.toggle("d-none", !hasItems);
+    checkoutButton.disabled = !hasItems;
+
+    fabCount.textContent = `${totalItems} item${totalItems === 1 ? "" : "s"}`;
+    fabTotal.textContent = total;
+    cartFab.classList.toggle("d-none", !hasItems);
+
+    renderDishActions(new Map(items.map((item) => [item.menu_item_id, item])));
   }
 
   async function refreshCart() {
@@ -108,32 +228,23 @@
     }
   }
 
-  // Run a cart change, then re-render; buttons are disabled meanwhile to avoid double clicks
-  async function cartAction(target, request) {
+  // Run a cart change, then re-render; the button is disabled meanwhile to avoid double clicks
+  async function cartAction(target, request, successMessage) {
     target.disabled = true;
     showError("");
     try {
       await request();
+      if (successMessage) showToast(successMessage);
     } catch (err) {
       showError(err.message);
+      showToast(err.message);
     } finally {
       target.disabled = false;
       refreshCart();
     }
   }
 
-  // === Category filter (client-side; all items are already on the page) ===
-  categoryButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const category = btn.dataset.category;
-      categoryButtons.forEach((b) => b.classList.toggle("active", b === btn));
-      itemsContainer.querySelectorAll(".menu-item").forEach((card) => {
-        card.classList.toggle("d-none", Boolean(category) && card.dataset.category !== category);
-      });
-    });
-  });
-
-  // === Cart controls ===
+  // ---------------- Cart controls (menu cards + cart panel) ----------------
   document.addEventListener("click", (e) => {
     const target = e.target.closest("button");
     if (!target) return;
@@ -141,8 +252,10 @@
     const qty = Number(target.dataset.qty);
 
     if (target.classList.contains("add-to-cart")) {
-      cartAction(target, () =>
-        api("/api/cart/add", { method: "POST", body: JSON.stringify({ menu_item_id: id }) })
+      cartAction(
+        target,
+        () => api("/api/cart/add", { method: "POST", body: JSON.stringify({ menu_item_id: id }) }),
+        `Added ${target.dataset.name} ✓`
       );
     } else if (target.classList.contains("increase-qty")) {
       cartAction(target, () =>
@@ -160,6 +273,7 @@
   // Prevent double submission of the checkout form
   checkoutForm.addEventListener("submit", () => {
     checkoutButton.disabled = true;
+    checkoutButton.textContent = "Taking you to payment…";
   });
 
   refreshCart();

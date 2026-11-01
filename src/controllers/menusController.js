@@ -1,7 +1,8 @@
 import { Menu } from "../models/index.js";
 import { parseId } from "../utils/request.js";
+import { isValidMenuImageUrl } from "../utils/menuImages.js";
 
-const MENU_ATTRIBUTES = ["id", "item_name", "item_description", "item_price", "item_category", "available"];
+const MENU_ATTRIBUTES = ["id", "item_name", "item_description", "item_price", "item_category", "available", "image_url"];
 
 const isValidPrice = (price) => {
   const value = Number(price);
@@ -34,11 +35,14 @@ export const getMenuById = async (req, res) => {
 };
 
 export const createMenu = async (req, res) => {
-  const { item_name, item_description, item_price, item_category, available } = req.body;
+  const { item_name, item_description, item_price, item_category, available, image_url } = req.body;
   if (!item_name || !item_category || !isValidPrice(item_price)) {
     return res
       .status(400)
       .json({ message: "Name, category and a positive price are required" });
+  }
+  if (image_url !== undefined && !isValidMenuImageUrl(image_url)) {
+    return res.status(400).json({ message: "image_url must be a local path like /images/menu/samosa.jpg" });
   }
 
   const newMenu = await Menu.create({
@@ -47,6 +51,7 @@ export const createMenu = async (req, res) => {
     item_price,
     item_category,
     available: available ?? true,
+    image_url: image_url ?? null,
   });
 
   res.status(201).json({ message: "Menu item created successfully", menu: newMenu });
@@ -58,9 +63,12 @@ export const updateMenu = async (req, res) => {
   const menu = id && (await Menu.findByPk(id));
   if (!menu) return res.status(404).json({ message: "Menu item not found" });
 
-  const { item_name, item_description, item_price, item_category, available } = req.body;
+  const { item_name, item_description, item_price, item_category, available, image_url } = req.body;
   if (item_price !== undefined && !isValidPrice(item_price)) {
     return res.status(400).json({ message: "Price must be a positive number" });
+  }
+  if (image_url !== undefined && !isValidMenuImageUrl(image_url)) {
+    return res.status(400).json({ message: "image_url must be a local path like /images/menu/samosa.jpg" });
   }
 
   await menu.update({
@@ -69,6 +77,7 @@ export const updateMenu = async (req, res) => {
     item_price: item_price ?? menu.item_price,
     item_category: item_category ?? menu.item_category,
     available: available ?? menu.available,
+    image_url: image_url === undefined ? menu.image_url : image_url,
   });
 
   res.json({ message: "Menu item updated successfully", menu });

@@ -26,6 +26,10 @@ export default (sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
+      // Local photo path, e.g. /images/menu/samosa.jpg (see utils/menuImages.js)
+      image_url: {
+        type: DataTypes.STRING,
+      },
     },
     { tableName: "menus", underscored: true }
   );

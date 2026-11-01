@@ -1,71 +1,173 @@
-<h4 class="mb-0 text-center py-3">🍴 Restaurant Menu</h4>
+<%
+  // Starters → mains → snacks → drinks, vegetarian before non-vegetarian
+  const categoryRank = (c) => {
+    const course = /starter/i.test(c) ? 0 : /main/i.test(c) ? 1 : /snack/i.test(c) ? 2 : /beverage|drink/i.test(c) ? 3 : 4;
+    return course * 2 + (/non-veg/i.test(c) ? 1 : 0);
+  };
+  const categoryIcon = (c) =>
+    /beverage|drink/i.test(c) ? "🥤"
+    : /snack/i.test(c) ? "🍟"
+    : /non-veg/i.test(c) ? (/starter/i.test(c) ? "🍗" : "🍖")
+    : /starter/i.test(c) ? "🥗"
+    : /main/i.test(c) ? "🍛"
+    : "🍽️";
+  const isVeg = (item) => !/non-veg/i.test(item.item_category);
+  // Short chip labels keep the category bar on one line ("Non-Vegetarian Main Course" → "Non-Veg Mains")
+  const chipLabel = (c) =>
+    c.replace(/vegetarian/gi, "Veg").replace(/main course/gi, "Mains");
 
-<div class="container-fluid kiosk-layout">
-  <div class="row">
-    <!-- Categories Sidebar -->
-    <div class="col-md-3 col-lg-2 category-sidebar">
-      <h5 class="mb-3">📂 Categories</h5>
-      <ul id="categories" class="list-unstyled category-list">
-        <% const categories = [...new Set(menus.map(m => m.item_category))]; %>
-        <li>
-          <button type="button" class="btn category-btn w-100 active" data-category="">All</button>
-        </li>
-        <% categories.forEach(cat => { %>
-          <li>
-            <button type="button" class="btn category-btn w-100" data-category="<%= cat %>">
-              <%= cat %>
-            </button>
-          </li>
-        <% }) %>
-      </ul>
+  const categories = [...new Set(menus.map((m) => m.item_category))].sort(
+    (a, b) => categoryRank(a) - categoryRank(b) || a.localeCompare(b)
+  );
+  const sectionId = (c) => "cat-" + c.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+%>
+<div class="kiosk-page">
+  <!-- Hero -->
+  <section class="kiosk-hero">
+    <div class="container-xxl">
+      <p class="kiosk-eyebrow">Self-order kiosk</p>
+      <h1 class="kiosk-title">What would you like to eat today?</h1>
+      <p class="kiosk-subtitle">Freshly made Indian favourites. Tap <strong>Add</strong> on a dish and pay when you’re ready.</p>
+      <div class="kiosk-search">
+        <span class="kiosk-search-icon" aria-hidden="true">🔍</span>
+        <input type="search" id="menu-search" class="form-control" placeholder="Search dishes, e.g. paneer, lassi…"
+               aria-label="Search the menu" autocomplete="off">
+      </div>
     </div>
+  </section>
 
-    <!-- Main Menu Items -->
-    <div class="col-md-5 col-lg-7">
-      <h5 class="mb-3">🍽️ Menu Items</h5>
-      <div id="items-container" class="row">
-        <% if (!menus.length) { %>
-          <p class="text-muted">No items are available right now.</p>
-        <% } %>
-        <% menus.forEach(item => { %>
-          <div class="col-lg-6 mb-3 menu-item" data-category="<%= item.item_category %>">
-            <div class="card h-100 shadow-sm p-3 d-flex flex-column">
-              <h6><%= item.item_name %></h6>
-              <p class="mb-1 text-muted"><%= item.item_description %></p>
-              <p class="fw-bold">₹<%= formatRupees(item.item_price) %></p>
-              <button type="button" class="btn btn-sm btn-outline-danger mt-auto add-to-cart"
-                      data-id="<%= item.id %>">
-                ➕ Add to Cart
-              </button>
+  <!-- Category bar -->
+  <div class="kiosk-toolbar" id="kiosk-toolbar">
+    <div class="container-xxl d-flex align-items-center gap-3">
+      <div class="category-chips" role="toolbar" aria-label="Menu categories">
+        <button type="button" class="category-chip active" data-category="" aria-pressed="true">🍽️ All</button>
+        <% categories.forEach(cat => { %>
+          <button type="button" class="category-chip" data-category="<%= cat %>" aria-pressed="false" title="<%= cat %>">
+            <%= categoryIcon(cat) %> <%= chipLabel(cat) %>
+          </button>
+        <% }) %>
+      </div>
+      <div class="form-check form-switch veg-switch ms-auto">
+        <input class="form-check-input" type="checkbox" role="switch" id="veg-only">
+        <label class="form-check-label" for="veg-only"><span class="veg-mark veg" aria-hidden="true"></span> Veg only</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-xxl kiosk-body">
+    <div class="row g-4">
+      <!-- Menu -->
+      <div class="col-lg-8 col-xl-9">
+        <div id="menu-sections">
+          <% if (!menus.length) { %>
+            <p class="text-muted py-5 text-center">No dishes are available right now. Please check back soon.</p>
+          <% } %>
+
+          <% categories.forEach(cat => { %>
+            <% const items = menus.filter((m) => m.item_category === cat); %>
+            <section class="menu-section" id="<%= sectionId(cat) %>" data-category="<%= cat %>">
+              <h2 class="menu-section-title">
+                <span aria-hidden="true"><%= categoryIcon(cat) %></span> <%= cat %>
+                <span class="menu-section-count"><%= items.length %></span>
+              </h2>
+              <div class="row g-3">
+                <% items.forEach(item => { %>
+                  <div class="col-sm-6 col-xxl-4 menu-item"
+                       data-category="<%= item.item_category %>"
+                       data-veg="<%= isVeg(item) %>"
+                       data-search="<%= `${item.item_name} ${item.item_description || ''}`.toLowerCase() %>">
+                    <article class="dish-card">
+                      <div class="dish-media">
+                        <% if (item.image_url) { %>
+                          <img src="<%= item.image_url %>" alt="<%= item.item_name %>" width="640" height="480" loading="lazy">
+                        <% } else { %>
+                          <div class="dish-placeholder" aria-hidden="true"><%= categoryIcon(item.item_category) %></div>
+                        <% } %>
+                      </div>
+                      <div class="dish-body">
+                        <div class="d-flex align-items-start gap-2">
+                          <span class="veg-mark <%= isVeg(item) ? 'veg' : 'nonveg' %>"
+                                title="<%= isVeg(item) ? 'Vegetarian' : 'Non-vegetarian' %>"
+                                aria-label="<%= isVeg(item) ? 'Vegetarian' : 'Non-vegetarian' %>"></span>
+                          <h3 class="dish-name"><%= item.item_name %></h3>
+                        </div>
+                        <p class="dish-desc"><%= item.item_description %></p>
+                        <div class="dish-footer">
+                          <span class="dish-price">₹<%= formatRupees(item.item_price) %></span>
+                          <div class="dish-action" data-menu-id="<%= item.id %>" data-name="<%= item.item_name %>">
+                            <button type="button" class="btn btn-add add-to-cart" data-id="<%= item.id %>"
+                                    data-name="<%= item.item_name %>" aria-label="Add <%= item.item_name %> to order">
+                              Add <span aria-hidden="true">+</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                <% }) %>
+              </div>
+            </section>
+          <% }) %>
+
+          <div id="menu-empty" class="menu-empty d-none">
+            <p class="fs-1 mb-2" aria-hidden="true">🤔</p>
+            <p class="fw-semibold mb-1">No dishes match your search.</p>
+            <p class="text-muted mb-0">Try another word or category.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart: sticky sidebar on large screens, bottom sheet on phones/tablets -->
+      <div class="col-lg-4 col-xl-3">
+        <aside class="offcanvas-lg offcanvas-bottom cart-panel" id="cartPanel" tabindex="-1" aria-labelledby="cartTitle">
+          <div class="offcanvas-header">
+            <h2 class="offcanvas-title h5" id="cartTitle">🛒 Your order</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#cartPanel" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <div class="cart-card">
+              <h2 class="cart-heading d-none d-lg-block">🛒 Your order</h2>
+
+              <div id="cart-error" class="alert alert-danger py-2 small d-none" role="alert"></div>
+
+              <div id="cart-empty" class="cart-empty">
+                <p class="fs-1 mb-1" aria-hidden="true">🍽️</p>
+                <p class="fw-semibold mb-1">Your cart is empty</p>
+                <p class="text-muted small mb-0">Add a dish from the menu to get started.</p>
+              </div>
+
+              <ul id="cart-items" class="cart-lines list-unstyled"></ul>
+
+              <div id="cart-summary" class="cart-summary d-none">
+                <div class="d-flex justify-content-between text-muted small">
+                  <span>Items</span><span id="cart-count">0</span>
+                </div>
+                <div class="d-flex justify-content-between cart-total-row">
+                  <span>Total</span><span id="cart-total">₹0</span>
+                </div>
+              </div>
+
+              <!-- ✅ Secure: this only posts to /checkout -->
+              <form action="/checkout" method="POST" id="checkout-form" class="mt-3">
+                <button type="submit" id="checkout-button" class="btn btn-checkout w-100" disabled>
+                  Proceed to Checkout →
+                </button>
+              </form>
             </div>
           </div>
-        <% }) %>
+        </aside>
       </div>
     </div>
-
-    <!-- Cart Sidebar -->
-    <aside class="col-md-4 col-lg-3 cart" aria-label="Your cart">
-      <h4 class="m-0 mb-3">🛒 Your Cart</h4>
-
-      <div id="cart-error" class="alert alert-danger py-2 d-none" role="alert"></div>
-
-      <ul id="cart-items" class="list-group mb-3"></ul>
-      <p id="cart-empty" class="text-muted small">Your cart is empty.</p>
-      <div class="d-flex justify-content-between fw-bold mb-3">
-        <span>Total:</span>
-        <span id="cart-total">₹0</span>
-      </div>
-      <!-- ✅ Secure: this only posts to /checkout -->
-      <form action="/checkout" method="POST" id="checkout-form">
-        <button type="submit" id="checkout-button" class="btn btn-danger w-100" disabled>
-          <span class="d-flex justify-content-between align-items-center">
-            <span>Proceed to Checkout</span>
-            <span id="cart-count" class="cart-badge">0</span>
-          </span>
-        </button>
-      </form>
-    </aside>
   </div>
+
+  <!-- Phones/tablets: floating cart bar -->
+  <button type="button" id="cart-fab" class="cart-fab d-lg-none d-none" data-bs-toggle="offcanvas" data-bs-target="#cartPanel"
+          aria-controls="cartPanel">
+    <span><span id="cart-fab-count">0 items</span> · <strong id="cart-fab-total">₹0</strong></span>
+    <span>View order ›</span>
+  </button>
+
+  <div id="cart-toast" class="cart-toast" role="status" aria-live="polite"></div>
 </div>
 
 <script src="/js/script.js"></script>

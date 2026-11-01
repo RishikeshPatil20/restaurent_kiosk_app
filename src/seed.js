@@ -9,6 +9,11 @@ import {
   Cart,
   CartItem,
 } from "../src/models/index.js";
+import { menuImageFor } from "./utils/menuImages.js";
+
+// Attach the bundled photo (public/images/menu) to each seeded dish
+const withMenuImages = (items) =>
+  items.map((item) => ({ ...item, image_url: menuImageFor(item.item_name) }));
 
 const seedDatabase = async () => {
   try {
@@ -47,7 +52,7 @@ const seedDatabase = async () => {
     );
 
     // ==================== Menus ====================
-    const menus = await Menu.bulkCreate([
+    const menus = await Menu.bulkCreate(withMenuImages([
       // Vegetarian Starters
       {
         item_name: "Paneer Tikka",
@@ -311,7 +316,7 @@ const seedDatabase = async () => {
         item_category: "Beverages",
         available: true,
       },
-    ]);
+    ]));
 
     console.log(
       "✅ Menus created:",

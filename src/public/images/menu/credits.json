@@ -1,0 +1,326 @@
+[
+  {
+    "item": "Paneer Tikka",
+    "image": "/images/menu/paneer-tikka.jpg",
+    "title": "Paneer Tikka Shashlik PK012.jpg",
+    "author": "PallaviKhale",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Paneer_Tikka_Shashlik_PK012.jpg"
+  },
+  {
+    "item": "Aloo Tikki",
+    "image": "/images/menu/aloo-tikki.jpg",
+    "title": "Aloo Tikki served with chutneys.jpg",
+    "author": "Raveesh Vyas from [Ahmedabad, Noida], India",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Aloo_Tikki_served_with_chutneys.jpg"
+  },
+  {
+    "item": "Onion Bhaji",
+    "image": "/images/menu/onion-bhaji.jpg",
+    "title": "Kanda Bhaji.JPG",
+    "author": "Adityakerkar",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Kanda_Bhaji.JPG"
+  },
+  {
+    "item": "Samosa",
+    "image": "/images/menu/samosa.jpg",
+    "title": "Samosas, snack food at Wikipedia's 16th Birthday celebration in Chittagong (01).jpg",
+    "author": "Moheen Reeyad",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Samosas,_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_(01).jpg"
+  },
+  {
+    "item": "Vegetable Pakora",
+    "image": "/images/menu/vegetable-pakora.jpg",
+    "title": "Pakoras in Jaipur.jpg",
+    "author": "ampersandyslexia",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pakoras_in_Jaipur.jpg"
+  },
+  {
+    "item": "Hara Bhara Kebab",
+    "image": "/images/menu/hara-bhara-kebab.jpg",
+    "title": "Hara bhara kabab.JPG",
+    "author": "Milanography",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hara_bhara_kabab.JPG"
+  },
+  {
+    "item": "Chicken Tikka",
+    "image": "/images/menu/chicken-tikka.jpg",
+    "title": "Chicken tikka in Araku Valley, Andhra Pradesh 01.jpg",
+    "author": "Satdeep Gill",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_tikka_in_Araku_Valley,_Andhra_Pradesh_01.jpg"
+  },
+  {
+    "item": "Tandoori Chicken",
+    "image": "/images/menu/tandoori-chicken.jpg",
+    "title": "Tandoori chicken Indian.jpg",
+    "author": "pelican",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tandoori_chicken_Indian.jpg"
+  },
+  {
+    "item": "Seekh Kebab",
+    "image": "/images/menu/seekh-kebab.jpg",
+    "title": "Seekh Kebab.JPG",
+    "author": "raasiel",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Seekh_Kebab.JPG"
+  },
+  {
+    "item": "Fish Amritsari",
+    "image": "/images/menu/fish-amritsari.jpg",
+    "title": "FISH BATTER FRY ON A SWEET IMLI BASE - MADE AT GNIHM - KOLKATA , WESTBENGAL - IMG010.jpg",
+    "author": "Guddu1996",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:FISH_BATTER_FRY_ON_A_SWEET_IMLI_BASE_-_MADE_AT_GNIHM_-_KOLKATA_,_WESTBENGAL_-_IMG010.jpg"
+  },
+  {
+    "item": "Chicken 65",
+    "image": "/images/menu/chicken-65.jpg",
+    "title": "Chicken 65 (Dish).jpg",
+    "author": "Amiyashrivastava",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_65_(Dish).jpg"
+  },
+  {
+    "item": "Prawn Fry",
+    "image": "/images/menu/prawn-fry.jpg",
+    "title": "Fried Prawn of Digha.jpg",
+    "author": "Samudra013",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Fried_Prawn_of_Digha.jpg"
+  },
+  {
+    "item": "Paneer Butter Masala",
+    "image": "/images/menu/paneer-butter-masala.jpg",
+    "title": "Paneer Makhani Veggie.jpeg",
+    "author": "Charvi Kakwani",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Paneer_Makhani_Veggie.jpeg"
+  },
+  {
+    "item": "Dal Makhani",
+    "image": "/images/menu/dal-makhani.jpg",
+    "title": "Dal Makhani.jpg",
+    "author": "Charles Haynes",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dal_Makhani.jpg"
+  },
+  {
+    "item": "Chana Masala",
+    "image": "/images/menu/chana-masala.jpg",
+    "title": "Chana masala.jpg",
+    "author": "Simon Law (sfllaw) from Montréal, QC, Canada",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chana_masala.jpg"
+  },
+  {
+    "item": "Palak Paneer",
+    "image": "/images/menu/palak-paneer.jpg",
+    "title": "Palak Paneer (Cottage cheese in spinach gravy).jpg",
+    "author": "DreamyFlutura11",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Palak_Paneer_(Cottage_cheese_in_spinach_gravy).jpg"
+  },
+  {
+    "item": "Malai Kofta",
+    "image": "/images/menu/malai-kofta.jpg",
+    "title": "Koofteh tabrizi.jpg",
+    "author": "Fabienkhan",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "source": "https://commons.wikimedia.org/wiki/File:Koofteh_tabrizi.jpg"
+  },
+  {
+    "item": "Aloo Gobi",
+    "image": "/images/menu/aloo-gobi.jpg",
+    "title": "Aloo gobi.jpg",
+    "author": "Unknown",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Aloo_gobi.jpg"
+  },
+  {
+    "item": "Butter Chicken",
+    "image": "/images/menu/butter-chicken.jpg",
+    "title": "Chicken makhani.jpg",
+    "author": "stu_spivack",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_makhani.jpg"
+  },
+  {
+    "item": "Chicken Curry",
+    "image": "/images/menu/chicken-curry.jpg",
+    "title": "Chicken Curry North Indian Style.jpg",
+    "author": "Deepti135",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_Curry_North_Indian_Style.jpg"
+  },
+  {
+    "item": "Rogan Josh",
+    "image": "/images/menu/rogan-josh.jpg",
+    "title": "Rogan Josh Kashmiri.jpg",
+    "author": "Spice Eats",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Rogan_Josh_Kashmiri.jpg"
+  },
+  {
+    "item": "Goan Fish Curry",
+    "image": "/images/menu/goan-fish-curry.jpg",
+    "title": "Fish Curry Rice Thali (19044595366).jpg",
+    "author": "goanfishcurryrice3",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Fish_Curry_Rice_Thali_(19044595366).jpg"
+  },
+  {
+    "item": "Prawn Masala",
+    "image": "/images/menu/prawn-masala.jpg",
+    "title": "Shrimp curry on plate.jpg",
+    "author": "Jon Sullivan",
+    "license": "Public domain",
+    "licenseUrl": null,
+    "source": "https://commons.wikimedia.org/wiki/File:Shrimp_curry_on_plate.jpg"
+  },
+  {
+    "item": "Mutton Biryani",
+    "image": "/images/menu/mutton-biryani.jpg",
+    "title": "\"Hyderabadi Dum Biryani\".jpg",
+    "author": "Mahi Tatavarty",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%22Hyderabadi_Dum_Biryani%22.jpg"
+  },
+  {
+    "item": "French Fries",
+    "image": "/images/menu/french-fries.jpg",
+    "title": "French Fries.JPG",
+    "author": "StockSnap",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:French_Fries.JPG"
+  },
+  {
+    "item": "Masala French Fries",
+    "image": "/images/menu/masala-french-fries.jpg",
+    "title": "Truffle oil french fries (33024792848).jpg",
+    "author": "Tony Webster from Minneapolis, Minnesota, United States",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Truffle_oil_french_fries_(33024792848).jpg"
+  },
+  {
+    "item": "Potato Chips",
+    "image": "/images/menu/potato-chips.jpg",
+    "title": "Potato-Chips.jpg",
+    "author": "Evan-Amos",
+    "license": "Public domain",
+    "licenseUrl": null,
+    "source": "https://commons.wikimedia.org/wiki/File:Potato-Chips.jpg"
+  },
+  {
+    "item": "Nachos",
+    "image": "/images/menu/nachos.jpg",
+    "title": "Nachos at Maya Restaurant - 2021-10-03 - Sarah Stierch.jpg",
+    "author": "Missvain",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Nachos_at_Maya_Restaurant_-_2021-10-03_-_Sarah_Stierch.jpg"
+  },
+  {
+    "item": "Mojito",
+    "image": "/images/menu/mojito.jpg",
+    "title": "MojitoReydelmojito.jpg",
+    "author": "Raimonsocial",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:MojitoReydelmojito.jpg"
+  },
+  {
+    "item": "Virgin Pina Colada",
+    "image": "/images/menu/virgin-pina-colada.jpg",
+    "title": "Piña Colada.jpg",
+    "author": "User Barmix on de.wikipedia",
+    "license": "Public domain",
+    "licenseUrl": null,
+    "source": "https://commons.wikimedia.org/wiki/File:Pi%C3%B1a_Colada.jpg"
+  },
+  {
+    "item": "Watermelon Cooler",
+    "image": "/images/menu/watermelon-cooler.jpg",
+    "title": "Watermelon Juice 1.jpg",
+    "author": "Gaurav Dhwaj Khadka",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Watermelon_Juice_1.jpg"
+  },
+  {
+    "item": "Lassi (Sweet)",
+    "image": "/images/menu/lassi-sweet.jpg",
+    "title": "Lassi (Sweet).JPG",
+    "author": "Nivasdurai",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lassi_(Sweet).JPG"
+  },
+  {
+    "item": "Lassi (Salted)",
+    "image": "/images/menu/lassi-salted.jpg",
+    "title": "Salt Lassie in terracotta (6104770787).jpg",
+    "author": "Barry Pousman from New York, NY",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Salt_Lassie_in_terracotta_(6104770787).jpg"
+  },
+  {
+    "item": "Mango Lassi",
+    "image": "/images/menu/mango-lassi.jpg",
+    "title": "Mango lassi at restaurant Momo & More in March 2024.jpg",
+    "author": "JIP",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mango_lassi_at_restaurant_Momo_%26_More_in_March_2024.jpg"
+  },
+  {
+    "item": "Chaas (Buttermilk)",
+    "image": "/images/menu/chaas-buttermilk.jpg",
+    "title": "Mint lassi.jpg",
+    "author": "Nitin",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mint_lassi.jpg"
+  },
+  {
+    "item": "Fresh Lime Soda",
+    "image": "/images/menu/fresh-lime-soda.jpg",
+    "title": "Koh Mak, Thailand, Lime juice with ice, Lemonade, Limeade.jpg",
+    "author": "Vyacheslav Argenberg",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Koh_Mak,_Thailand,_Lime_juice_with_ice,_Lemonade,_Limeade.jpg"
+  }
+]
